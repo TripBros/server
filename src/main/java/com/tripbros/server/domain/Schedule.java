@@ -22,11 +22,11 @@ public class Schedule {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "userId")
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	@ManyToOne
-	@JoinColumn(name = "locateId")
+	@JoinColumn(name = "locate_id")
 	private Locate locate;
 
 	private String title;

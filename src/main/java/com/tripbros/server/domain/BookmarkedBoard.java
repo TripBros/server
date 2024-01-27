@@ -21,7 +21,7 @@ public class BookmarkedBoard {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "board_id")
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	@ManyToOne

@@ -28,16 +28,16 @@ public class Message {
 
 	@OneToOne
 	@JoinColumn(name = "chatroom_id")
-	private ChatRoom chatRoom;
+	private Chatroom chatroom;
 
 	@Column(columnDefinition = "TEXT")
 	private String content;
 	private LocalDateTime sendedAt;
 
 	@Builder
-	public Message(User user, ChatRoom chatRoom, String content, LocalDateTime sendedAt) {
+	public Message(User user, Chatroom chatroom, String content, LocalDateTime sendedAt) {
 		this.user = user;
-		this.chatRoom = chatRoom;
+		this.chatroom = chatroom;
 		this.content = content;
 		this.sendedAt = sendedAt;
 	}

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class ChatRoom {
+public class Chatroom {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -28,7 +28,7 @@ public class ChatRoom {
 	private LocalDateTime createAt;
 
 	@Builder
-	public ChatRoom(Schedule schedule, boolean status, LocalDateTime createAt) {
+	public Chatroom(Schedule schedule, boolean status, LocalDateTime createAt) {
 		this.schedule = schedule;
 		this.status = status;
 		this.createAt = createAt;

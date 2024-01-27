@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TravelStyle {
 	@Id
-	@OneToOne(mappedBy = "user")
+	@OneToOne
 	@JoinColumn(name = "user_id")
 	private User user;
 
