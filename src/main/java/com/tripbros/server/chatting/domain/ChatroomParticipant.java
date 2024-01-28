@@ -1,4 +1,6 @@
-package com.tripbros.server.domain;
+package com.tripbros.server.chatting.domain;
+
+import com.tripbros.server.user.domain.User;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

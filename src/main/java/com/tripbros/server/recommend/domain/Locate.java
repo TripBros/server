@@ -1,7 +1,7 @@
-package com.tripbros.server.domain;
+package com.tripbros.server.recommend.domain;
 
-import com.tripbros.server.domain.enumerate.City;
-import com.tripbros.server.domain.enumerate.Country;
+import com.tripbros.server.enumerate.City;
+import com.tripbros.server.enumerate.Country;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

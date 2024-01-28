@@ -1,6 +1,9 @@
-package com.tripbros.server.domain;
+package com.tripbros.server.schedule.domain;
 
 import java.time.LocalDate;
+
+import com.tripbros.server.recommend.domain.Locate;
+import com.tripbros.server.user.domain.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

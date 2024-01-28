@@ -1,4 +1,4 @@
-package com.tripbros.server.domain.enumerate;
+package com.tripbros.server.enumerate;
 
 public enum Purpose {
 	ACCOMMODATION_SHARING,

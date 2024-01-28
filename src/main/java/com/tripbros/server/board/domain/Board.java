@@ -1,10 +1,12 @@
-package com.tripbros.server.domain;
+package com.tripbros.server.board.domain;
 
 import java.util.Date;
 
-import com.tripbros.server.domain.enumerate.Age;
-import com.tripbros.server.domain.enumerate.Purpose;
-import com.tripbros.server.domain.enumerate.Sex;
+import com.tripbros.server.schedule.domain.Schedule;
+import com.tripbros.server.user.domain.User;
+import com.tripbros.server.enumerate.Age;
+import com.tripbros.server.enumerate.Purpose;
+import com.tripbros.server.enumerate.Sex;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

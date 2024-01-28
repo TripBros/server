@@ -1,7 +1,9 @@
-package com.tripbros.server.domain;
+package com.tripbros.server.schedule.domain;
 
 import java.io.Serializable;
 import java.util.Objects;
+
+import com.tripbros.server.user.domain.User;
 
 import lombok.NoArgsConstructor;
 

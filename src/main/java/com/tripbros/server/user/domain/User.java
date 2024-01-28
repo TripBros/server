@@ -1,7 +1,7 @@
-package com.tripbros.server.domain;
+package com.tripbros.server.user.domain;
 
-import com.tripbros.server.domain.enumerate.Role;
-import com.tripbros.server.domain.enumerate.Sex;
+import com.tripbros.server.enumerate.Role;
+import com.tripbros.server.enumerate.Sex;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

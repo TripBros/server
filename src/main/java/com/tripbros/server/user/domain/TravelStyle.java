@@ -1,8 +1,10 @@
-package com.tripbros.server.domain;
+package com.tripbros.server.user.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +14,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class TravelStyle {
+
 	@Id
+	@Column(name = "user_id")
+	private Long id;
+
+	@MapsId
 	@OneToOne
 	@JoinColumn(name = "user_id")
 	private User user;
