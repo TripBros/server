@@ -2,6 +2,8 @@ package com.tripbros.server.user.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
@@ -16,13 +18,8 @@ import lombok.NoArgsConstructor;
 public class TravelStyle {
 
 	@Id
-	@Column(name = "user_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@MapsId
-	@OneToOne
-	@JoinColumn(name = "user_id")
-	private User user;
 
 	private boolean leisurePreferFlag;
 	private boolean planPreferFlag;
@@ -31,9 +28,8 @@ public class TravelStyle {
 	private boolean photoPreferFlag;
 
 	@Builder
-	public TravelStyle(User user, boolean leisurePreferFlag, boolean planPreferFlag, boolean adventurePreferFlag,
+	public TravelStyle(boolean leisurePreferFlag, boolean planPreferFlag, boolean adventurePreferFlag,
 		boolean vehiclePreferFlag, boolean photoPreferFlag) {
-		this.user = user;
 		this.leisurePreferFlag = leisurePreferFlag;
 		this.planPreferFlag = planPreferFlag;
 		this.adventurePreferFlag = adventurePreferFlag;
