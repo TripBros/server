@@ -1,5 +1,7 @@
 package com.tripbros.server.user.dto;
 
+import java.time.LocalDate;
+
 import com.tripbros.server.enumerate.Role;
 import com.tripbros.server.enumerate.Sex;
 import com.tripbros.server.user.domain.TravelStyle;
@@ -12,27 +14,28 @@ import jakarta.validation.constraints.NotNull;
 public record RegisterRequest(@NotBlank(message = "이메일은 필수 항목입니다.") @Email String email,
 							  @NotBlank(message = "비밀번호는 필수 항목입니다.") String password,
 							  @NotBlank(message = "닉네임은 필수 항목입니다.") String nickname,
-							  @NotNull(message = "나이는 필수 항목입니다.") Long age,
+							  @NotNull(message = "나이는 필수 항목입니다.") Long age, // 출생 년도임
 							  Sex sex,
-							  @NotNull Boolean leisurely_flag,
-							  @NotNull Boolean planner_flag,
-							  @NotNull Boolean adventurous_flag,
-							  @NotNull Boolean vehicle_travel_flag,
-							  @NotNull Boolean photo_preference_flag,
-							  String profile_image // nullable 일까요?
+							  @NotNull Boolean leisurePreferFlag,
+							  @NotNull Boolean planPreferFlag,
+							  @NotNull Boolean adventurePreferFlag,
+							  @NotNull Boolean vehiclePreferFlag,
+							  @NotNull Boolean photoPreferFlag,
+							  String profileImage // nullable 일까요?
 							  ) {
 
 	public User toEntity(String encryptedPassword, TravelStyle travelStyle, Role role){
 		return User.builder()
 			.email(email)
-			.password(password)
+			.password(encryptedPassword)
 			.nickname(nickname)
-			.age(age)
+			.age(LocalDate.now().getYear() - age + 1) //한국식 세는나이 적용
 			.sex(sex)
 			.travelStyle(travelStyle)
-			.profileImage(profile_image.getBytes())
+			.profileImage(profileImage.getBytes())
 			.role(role)
 			.build();
+		//TODO: 이미지 널이면 기본이미지로 설정할 수 있게 해야 할 듯
 	}
 
 }

@@ -1,10 +1,14 @@
 package com.tripbros.server.user;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbros.server.common.dto.BaseResponse;
@@ -12,6 +16,8 @@ import com.tripbros.server.common.exception.ValidationFailException;
 import com.tripbros.server.user.dto.RegisterRequest;
 import com.tripbros.server.user.service.UserRegisterService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +26,29 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
+@Tag(name = "유저 컨트롤러", description = "유저에 관한 행위의 API입니다.")
 public class UserController {
 	private final UserRegisterService registerService;
 
-	@PostMapping("/register")
+	@PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "회원 가입")
 	public ResponseEntity<BaseResponse<Object>> register(@Valid @RequestBody RegisterRequest request, Errors errors) {
 		if (errors.hasErrors())
 			throw new ValidationFailException(errors);
 		return registerService.register(request);
+	}
+
+	@GetMapping("/email-check")
+	@Operation(summary = "이메일 중복 검사")
+	public ResponseEntity<BaseResponse<Object>> checkEmail(@RequestParam String email){
+		registerService.checkEmailDuplication(email); //중복시 Exception Throw
+		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, null));
+	}
+
+	@GetMapping("/nickname-check")
+	@Operation(summary = "닉네임 중복 검사")
+	public ResponseEntity<BaseResponse<Object>> checkNickname(@RequestParam String nickname){
+		registerService.checkEmailDuplication(nickname); //중복시 Exception Throw
+		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, null));
 	}
 }

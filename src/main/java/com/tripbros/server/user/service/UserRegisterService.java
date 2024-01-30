@@ -6,7 +6,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import com.tripbros.server.common.dto.BaseResponse;
 import com.tripbros.server.enumerate.Role;
 import com.tripbros.server.user.domain.TravelStyle;
@@ -41,21 +40,31 @@ public class UserRegisterService {
 
 	private TravelStyle saveTravelStyle(RegisterRequest request) {
 		TravelStyle style = TravelStyle.builder()
-			.leisurePreferFlag(request.leisurely_flag())
-			.adventurePreferFlag(request.adventurous_flag())
-			.photoPreferFlag(request.photo_preference_flag())
-			.planPreferFlag(request.planner_flag())
-			.vehiclePreferFlag(request.vehicle_travel_flag())
+			.leisurePreferFlag(request.leisurePreferFlag())
+			.adventurePreferFlag(request.adventurePreferFlag())
+			.photoPreferFlag(request.photoPreferFlag())
+			.planPreferFlag(request.planPreferFlag())
+			.vehiclePreferFlag(request.vehiclePreferFlag())
 			.build();
 		return styleRepository.save(style);
 	}
 
 	private void validateRequest(RegisterRequest request) {
-		if (userRepository.existsByEmail(request.email()))
-			throw new RegisterException(UserExceptionMessage.EMAIL_ALREADY_EXIST.getMessage());
-		else if (userRepository.existsByNickname(request.nickname()))
-			throw new RegisterException(UserExceptionMessage.NICKNAME_ALREADY_EXIST.getMessage());
+		checkEmailDuplication(request.email());
+		checkNicknameDuplication(request.nickname());
+
 		//TODO : password-rule체크 ?
 	}
+
+	public void checkEmailDuplication(String email){
+		if (userRepository.existsByEmail(email))
+			throw new RegisterException(UserExceptionMessage.EMAIL_ALREADY_EXIST.getMessage());
+	}
+
+	public void checkNicknameDuplication(String nickname){
+		if (userRepository.existsByNickname(nickname))
+			throw new RegisterException(UserExceptionMessage.NICKNAME_ALREADY_EXIST.getMessage());
+	}
+
 
 }
