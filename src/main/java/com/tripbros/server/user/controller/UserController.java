@@ -1,8 +1,10 @@
-package com.tripbros.server.user;
+package com.tripbros.server.user.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,8 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbros.server.common.dto.BaseResponse;
 import com.tripbros.server.common.exception.ValidationFailException;
+import com.tripbros.server.security.JwtDTO;
+import com.tripbros.server.security.SecurityUser;
 import com.tripbros.server.user.dto.RegisterRequest;
+import com.tripbros.server.user.dto.SignInRequest;
 import com.tripbros.server.user.service.UserRegisterService;
+import com.tripbros.server.user.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "유저 컨트롤러", description = "유저에 관한 행위의 API입니다.")
 public class UserController {
 	private final UserRegisterService registerService;
+	private final UserService userService;
 
 	@PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "회원 가입")
@@ -50,5 +57,16 @@ public class UserController {
 	public ResponseEntity<BaseResponse<Object>> checkNickname(@RequestParam String nickname){
 		registerService.checkEmailDuplication(nickname); //중복시 Exception Throw
 		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, null));
+	}
+
+	@PostMapping("/sign-in")
+	public JwtDTO signIn(@RequestBody SignInRequest request) {
+		JwtDTO token = userService.signIn(request);
+		return token;
+	}
+
+	@GetMapping("/test")
+	public String test(@AuthenticationPrincipal SecurityUser user) {
+		return user.getUser().getNickname();
 	}
 }
