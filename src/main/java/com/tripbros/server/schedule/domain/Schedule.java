@@ -42,14 +42,13 @@ public class Schedule {
 
 	@Builder
 	public Schedule(User user, Locate locate, String title, LocalDate startDate, LocalDate endDate,
-		boolean boardMappedFlag,
 		String memo) {
 		this.user = user;
 		this.locate = locate;
 		this.title = title;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.boardMappedFlag = boardMappedFlag;
+		this.boardMappedFlag = false;
 		this.memo = memo;
 	}
 }
