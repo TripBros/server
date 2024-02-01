@@ -1,5 +1,6 @@
 package com.tripbros.server.user.controller;
 
+import com.tripbros.server.security.AuthUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +69,7 @@ public class UserController {
 
 	@GetMapping("/test") // 테스트 온리 컨트롤러
 	@Operation(summary = "백엔드 자체 테스트 전용 API 입니다.")
-	public String test(@AuthenticationPrincipal SecurityUser user) {
+	public String test(@AuthUser SecurityUser user) {
 		return user.getUser().getNickname();
 	}
 }

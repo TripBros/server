@@ -1,5 +1,6 @@
 package com.tripbros.server.config;
 
+import com.tripbros.server.security.JwtAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,21 +23,20 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private final TokenProvider tokenProvider;
 	private final UserDetailsServiceImpl userDetailsService;
-
-
+	private final JwtAuthenticationEntryPoint entryPoint;
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)  throws Exception{
 		httpSecurity
-			.authorizeHttpRequests((authorize) -> authorize
-				.requestMatchers("/", "/css/**", "/fonts/**").permitAll()
-				.requestMatchers("/api/register").permitAll()
-				.anyRequest().permitAll())
-			// .formLogin(form -> form
-			// 	.permitAll().defaultSuccessUrl("/", true)
-			// 	.usernameParameter("email")) // User entity에서, username을 email로서 사용하였습니다.
-			.csrf((csrf) -> csrf.disable())
-			.sessionManagement((manage) -> manage.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+				.authorizeHttpRequests((authorize) -> authorize
+						.requestMatchers("/", "/css/**", "/fonts/**").permitAll()
+						.requestMatchers("/api/register").permitAll()
+						.anyRequest().permitAll())
+				// .formLogin(form -> form
+				// 	.permitAll().defaultSuccessUrl("/", true)
+				// 	.usernameParameter("email")) // User entity에서, username을 email로서 사용하였습니다.
+				.csrf((csrf) -> csrf.disable())
+				.sessionManagement((manage) -> manage.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 			// .userDetailsService(userDetailsService);
 		return httpSecurity.build();
 

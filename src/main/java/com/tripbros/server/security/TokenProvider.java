@@ -97,6 +97,8 @@ public class TokenProvider {
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.joining(","));
 
+
+
 		Date validity = new Date(new Date().getTime() + this.tokenValidityInMilliseconds);
 
 		String accessToken = Jwts.builder()
