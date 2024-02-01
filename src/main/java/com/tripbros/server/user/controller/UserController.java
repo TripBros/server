@@ -60,12 +60,14 @@ public class UserController {
 	}
 
 	@PostMapping("/sign-in")
-	public JwtDTO signIn(@RequestBody SignInRequest request) {
+	@Operation(summary = "로그인")
+	public ResponseEntity<BaseResponse<JwtDTO>> signIn(@RequestBody SignInRequest request) {
 		JwtDTO token = userService.signIn(request);
-		return token;
+		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, token));
 	}
 
-	@GetMapping("/test")
+	@GetMapping("/test") // 테스트 온리 컨트롤러
+	@Operation(summary = "백엔드 자체 테스트 전용 API 입니다.")
 	public String test(@AuthenticationPrincipal SecurityUser user) {
 		return user.getUser().getNickname();
 	}

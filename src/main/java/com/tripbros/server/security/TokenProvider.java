@@ -7,12 +7,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -35,6 +37,8 @@ public class TokenProvider {
 	private  String secret; //시크릿 키 저장소
 	protected long tokenValidityInMilliseconds;
 	protected Key key;
+	@Autowired
+	private UserDetailsServiceImpl detailsService;
 
 	public TokenProvider(@Value("${jwt.secret_key}") String secret, @Value("${jwt.expiration_time}")  long tokenValidityInMilliseconds){
 		this.secret = secret;
@@ -58,8 +62,7 @@ public class TokenProvider {
 				.map(SimpleGrantedAuthority::new)
 				.toList();
 
-		User principal = new User(claims.getSubject(), "", authorities);
-
+		UserDetails principal = detailsService.loadUserByUsername(claims.getSubject()); //todo : 무엇으로 바인딩 할지 결정
 		return new UsernamePasswordAuthenticationToken(principal, token, authorities);
 
 	}

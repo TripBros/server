@@ -22,15 +22,12 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 	private final TokenProvider tokenProvider;
 	private final AuthenticationManagerBuilder managerBuilder;
-	private final UserDetailsServiceImpl userDetailsService;
 
 	public JwtDTO signIn(SignInRequest request) {
-		UserDetails details = userDetailsService.loadUserByUsername(request.email());
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-			details, request.password());
+			request.email(), request.password());
 
 		Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
 		return tokenProvider.createToken(authentication);
 	}
 }

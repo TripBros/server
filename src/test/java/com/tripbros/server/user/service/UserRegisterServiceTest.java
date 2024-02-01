@@ -30,9 +30,9 @@ class UserRegisterServiceTest {
 
 	@BeforeEach
 	void 전처리(){
-		 request = new RegisterRequest("email@email.com"
+		 request = new RegisterRequest("emailtest@email.com"
 			, "password"
-			, "nickname"
+			, "testnickname"
 			, 30L
 			, Sex.MALE
 			, true
@@ -64,7 +64,7 @@ class UserRegisterServiceTest {
 
 		RegisterRequest request1 = new RegisterRequest("22email@email.com"
 			, "password"
-			, "nickname"
+			, "testnickname"
 			, 30L
 			, Sex.MALE
 			, true
@@ -98,7 +98,7 @@ class UserRegisterServiceTest {
 		//전처리로 수행
 
 		//when && then
-		Assertions.assertThatThrownBy(() -> service.checkEmailDuplication("email@email.com"))
+		Assertions.assertThatThrownBy(() -> service.checkEmailDuplication("emailtest@email.com"))
 			.isInstanceOf(RegisterException.class)
 			.hasMessage(UserExceptionMessage.EMAIL_ALREADY_EXIST.getMessage());
 
@@ -111,7 +111,7 @@ class UserRegisterServiceTest {
 		//전처리로 수행
 
 		//when && then
-		Assertions.assertThatThrownBy(() -> service.checkNicknameDuplication("nickname"))
+		Assertions.assertThatThrownBy(() -> service.checkNicknameDuplication("testnickname"))
 			.isInstanceOf(RegisterException.class)
 			.hasMessage(UserExceptionMessage.NICKNAME_ALREADY_EXIST.getMessage());
 

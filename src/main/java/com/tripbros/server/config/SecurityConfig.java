@@ -36,8 +36,8 @@ public class SecurityConfig {
 			// 	.usernameParameter("email")) // User entity에서, username을 email로서 사용하였습니다.
 			.csrf((csrf) -> csrf.disable())
 			.sessionManagement((manage) -> manage.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
-			.userDetailsService(userDetailsService);
+			.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+			// .userDetailsService(userDetailsService);
 		return httpSecurity.build();
 
 	}
