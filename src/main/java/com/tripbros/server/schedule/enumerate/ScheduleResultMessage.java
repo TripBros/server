@@ -1,7 +1,9 @@
 package com.tripbros.server.schedule.enumerate;
 
 public enum ScheduleResultMessage {
-	SAVE_SCHEDULE_SUCCESS("일정 저장 성공"),
+	CREATE_SCHEDULE_SUCCESS("일정 생성 성공"),
+	UPDATE_SCHEDULE_SUCCESS("일정 수정 성공"),
+	GET_SCHEDULE_SUCCESS("일정 조회 성공"),
 	DELETE_SCHEDULE_SUCCESS("일정 삭제 성공");
 
 	final String message;
