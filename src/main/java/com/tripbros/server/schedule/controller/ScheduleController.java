@@ -1,6 +1,7 @@
 package com.tripbros.server.schedule.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbros.server.common.dto.BaseResponse;
@@ -20,7 +20,6 @@ import com.tripbros.server.schedule.dto.GetScheduleResponseDTO;
 import com.tripbros.server.schedule.service.ScheduleService;
 import com.tripbros.server.security.AuthUser;
 import com.tripbros.server.security.SecurityUser;
-import com.tripbros.server.user.domain.User;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,7 +37,7 @@ public class ScheduleController {
 
 	@PostMapping("/create")
 	@Operation(summary = "일정 추가")
-	public ResponseEntity<BaseResponse<Object>> createSchedule(@Valid @AuthUser SecurityUser user, @RequestBody CreateScheduleRequestDTO createScheduleRequestDTO, Errors errors){
+	public ResponseEntity<BaseResponse<Object>> createSchedule(@AuthUser SecurityUser user, @RequestBody CreateScheduleRequestDTO createScheduleRequestDTO, Errors errors){
 		if (errors.hasErrors())
 			throw new ValidationFailException(errors);
 
@@ -47,7 +46,7 @@ public class ScheduleController {
 
 	@PostMapping("/edit")
 	@Operation(summary = "일정 수정")
-	public ResponseEntity<BaseResponse<Object>> updateSchedule(@Valid @AuthUser SecurityUser user, @RequestBody EditScheduleRequestDTO editScheduleRequestDTO, Errors errors){
+	public ResponseEntity<BaseResponse<Object>> editSchedule(@Valid @AuthUser SecurityUser user, @RequestBody EditScheduleRequestDTO editScheduleRequestDTO, Errors errors){
 		if (errors.hasErrors())
 			throw new ValidationFailException(errors);
 
@@ -56,19 +55,17 @@ public class ScheduleController {
 
 	@GetMapping("/list")
 	@Operation(summary = "일정 조회")
-	public ResponseEntity<BaseResponse<List<GetScheduleResponseDTO>>> getSchedules(@Valid @AuthUser SecurityUser user, Errors errors){
-		if (errors.hasErrors())
-			throw new ValidationFailException(errors);
-
+	public ResponseEntity<BaseResponse<List<GetScheduleResponseDTO>>> getSchedules(@AuthUser SecurityUser user){
 		return scheduleService.getSchedules(user.getUser());
 	}
 
 	@DeleteMapping("/delete")
 	@Operation(summary = "일정 삭제")
-	public ResponseEntity<BaseResponse<Object>> deleteSchedule(@Valid @AuthUser SecurityUser user, @RequestBody Long scheduleId, Errors errors){
+	public ResponseEntity<BaseResponse<Object>> deleteSchedule(@Valid @AuthUser SecurityUser user, @RequestBody Map<String,Long> request, Errors errors){
 		if (errors.hasErrors())
 			throw new ValidationFailException(errors);
 
+		Long scheduleId = request.get("id");
 		return scheduleService.deleteSchedule(scheduleId);
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.tripbros.server.common.dto.BaseResponse;
+import com.tripbros.server.recommend.repository.LocateRepository;
 import com.tripbros.server.schedule.domain.Schedule;
 import com.tripbros.server.schedule.dto.CreateScheduleRequestDTO;
 import com.tripbros.server.schedule.dto.EditScheduleRequestDTO;
@@ -27,9 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ScheduleService {
 
 	private final ScheduleRepository scheduleRepository;
+	private final LocateRepository locateRepository;
 
 	public ResponseEntity<BaseResponse<Object>> createSchedule(User user, CreateScheduleRequestDTO createScheduleRequestDTO){
-		Schedule schedule = createScheduleRequestDTO.toEntity(user);
+		Schedule schedule = createScheduleRequestDTO.toEntity(user, locateRepository);
 		scheduleRepository.save(schedule);
 
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
@@ -42,7 +44,7 @@ public class ScheduleService {
 	public ResponseEntity<BaseResponse<Object>> editSchedule(User user, EditScheduleRequestDTO editScheduleRequestDTO){
 		scheduleRepository.deleteById(editScheduleRequestDTO.id());
 
-		Schedule schedule = editScheduleRequestDTO.toEntity(user);
+		Schedule schedule = editScheduleRequestDTO.toEntity(user,locateRepository);
 		scheduleRepository.save(schedule);
 
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
