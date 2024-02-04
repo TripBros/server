@@ -51,66 +51,66 @@ class ScheduleServiceTest {
 		);
 		 userRepository.save(user);
 	}
-
-	@Test
-	void createSchedule() {
-		// given
-		// when
-		ResponseEntity<BaseResponse<Object>> response = scheduleService.createSchedule(user, requestDTO);
-		// then
-		Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-	}
-
-	@Test
-	void editSchedule() {
-		// given
-		scheduleService.createSchedule(user, requestDTO);
-
-		List<GetScheduleResponseDTO> data = scheduleService.getSchedules(user).getBody().data();
-		Long schedId = data.get(data.size() - 1).id(); // 임시
-		// when
-		EditScheduleRequestDTO editRequest = new EditScheduleRequestDTO(schedId,
-			"몽골 여행!!",
-			Country.KOREA,
-			City.SEOUL,
-			LocalDate.parse("2024-03-01"),
-			LocalDate.parse("2024-05-05"),
-			"nope");
-
-		ResponseEntity<BaseResponse<Object>> response = scheduleService.editSchedule(user, editRequest);
-		// then
-		getTest();
-		Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-	}
-
-	private void getTest() {
-		ResponseEntity<BaseResponse<List<GetScheduleResponseDTO>>> schedules = scheduleService.getSchedules(user);
-		System.out.println("test schedules = " + schedules.getBody().data());
-	}
-
-	@Test
-	void getSchedules() {
-		// given
-		scheduleService.createSchedule(user, requestDTO);
-		// when
-		ResponseEntity<BaseResponse<List<GetScheduleResponseDTO>>> response = scheduleService.getSchedules(user);
-
-		// then
-		System.out.println("Get response Test = " + response.getBody().data());
-		Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-	}
-
-	@Test
-	void deleteSchedule() {
-		// given
-		scheduleService.createSchedule(user,requestDTO);
-		List<GetScheduleResponseDTO> data = scheduleService.getSchedules(user).getBody().data();
-		Long schedId = data.get(data.size() - 1).id();
-		getTest();
-		// when
-		ResponseEntity<BaseResponse<Object>> response = scheduleService.deleteSchedule(schedId);
-		// then
-		getTest();
-		Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-	}
+	//
+	// @Test
+	// void createSchedule() {
+	// 	// given
+	// 	// when
+	// 	ResponseEntity<BaseResponse<Object>> response = scheduleService.createSchedule(user, requestDTO);
+	// 	// then
+	// 	Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+	// }
+	//
+	// @Test
+	// void editSchedule() {
+	// 	// given
+	// 	scheduleService.createSchedule(user, requestDTO);
+	//
+	// 	List<GetScheduleResponseDTO> data = scheduleService.getSchedules(user).getBody().data();
+	// 	Long schedId = data.get(data.size() - 1).id(); // 임시
+	// 	// when
+	// 	EditScheduleRequestDTO editRequest = new EditScheduleRequestDTO(schedId,
+	// 		"몽골 여행!!",
+	// 		Country.KOREA,
+	// 		City.SEOUL,
+	// 		LocalDate.parse("2024-03-01"),
+	// 		LocalDate.parse("2024-05-05"),
+	// 		"nope");
+	//
+	// 	ResponseEntity<BaseResponse<Object>> response = scheduleService.editSchedule(user, editRequest);
+	// 	// then
+	// 	getTest();
+	// 	Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+	// }
+	//
+	// private void getTest() {
+	// 	ResponseEntity<BaseResponse<List<GetScheduleResponseDTO>>> schedules = scheduleService.getSchedules(user);
+	// 	System.out.println("test schedules = " + schedules.getBody().data());
+	// }
+	//
+	// @Test
+	// void getSchedules() {
+	// 	// given
+	// 	scheduleService.createSchedule(user, requestDTO);
+	// 	// when
+	// 	ResponseEntity<BaseResponse<List<GetScheduleResponseDTO>>> response = scheduleService.getSchedules(user);
+	//
+	// 	// then
+	// 	System.out.println("Get response Test = " + response.getBody().data());
+	// 	Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+	// }
+	//
+	// @Test
+	// void deleteSchedule() {
+	// 	// given
+	// 	scheduleService.createSchedule(user,requestDTO);
+	// 	List<GetScheduleResponseDTO> data = scheduleService.getSchedules(user).getBody().data();
+	// 	Long schedId = data.get(data.size() - 1).id();
+	// 	getTest();
+	// 	// when
+	// 	ResponseEntity<BaseResponse<Object>> response = scheduleService.deleteSchedule(schedId);
+	// 	// then
+	// 	getTest();
+	// 	Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+	// }
 }

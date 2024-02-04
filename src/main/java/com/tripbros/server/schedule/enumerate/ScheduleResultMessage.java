@@ -6,7 +6,7 @@ public enum ScheduleResultMessage {
 	GET_SCHEDULE_SUCCESS("일정 조회 성공"),
 	DELETE_SCHEDULE_SUCCESS("일정 삭제 성공");
 
-	final String message;
+	private final String message;
 
 	ScheduleResultMessage(String message) {
 		this.message = message;

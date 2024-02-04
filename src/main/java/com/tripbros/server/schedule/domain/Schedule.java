@@ -36,19 +36,21 @@ public class Schedule {
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private boolean boardMappedFlag;
+	private boolean readOnlyFlag;
 
 	@Column(columnDefinition = "TEXT")
 	private String memo;
 
 	@Builder
 	public Schedule(User user, Locate locate, String title, LocalDate startDate, LocalDate endDate,
-		String memo) {
+		boolean readOnlyFlag, String memo) {
 		this.user = user;
 		this.locate = locate;
 		this.title = title;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.boardMappedFlag = false;
+		this.readOnlyFlag = readOnlyFlag;
 		this.memo = memo;
 	}
 }
