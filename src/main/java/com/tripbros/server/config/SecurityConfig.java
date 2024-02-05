@@ -1,6 +1,5 @@
 package com.tripbros.server.config;
 
-import com.tripbros.server.security.JwtAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +14,10 @@ import com.tripbros.server.security.JwtFilter;
 import com.tripbros.server.security.TokenProvider;
 import com.tripbros.server.security.UserDetailsServiceImpl;
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -23,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private final TokenProvider tokenProvider;
 	private final UserDetailsServiceImpl userDetailsService;
-	private final JwtAuthenticationEntryPoint entryPoint;
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)  throws Exception{
 		httpSecurity
@@ -31,21 +33,34 @@ public class SecurityConfig {
 						.requestMatchers("/", "/css/**", "/fonts/**").permitAll()
 						.requestMatchers("/api/register").permitAll()
 						.anyRequest().permitAll())
-				// .formLogin(form -> form
-				// 	.permitAll().defaultSuccessUrl("/", true)
-				// 	.usernameParameter("email")) // User entity에서, username을 email로서 사용하였습니다.
 				.csrf((csrf) -> csrf.disable())
+			.cors((cors) -> cors.disable()) // FIXME : 프론트 배포시 제거해주세요
 				.sessionManagement((manage) -> manage.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
-			// .userDetailsService(userDetailsService);
 		return httpSecurity.build();
 
+	}
+	@Bean
+	public OpenAPI api() {
+		SecurityScheme apiKey = new SecurityScheme()
+			.type(SecurityScheme.Type.HTTP)
+			.scheme("bearer").bearerFormat("JWT")
+			.in(SecurityScheme.In.HEADER)
+			.name("Authorization");
+
+		SecurityRequirement securityRequirement = new SecurityRequirement()
+			.addList("Bearer Token");
+
+		return new OpenAPI()
+			.components(new Components().addSecuritySchemes("Bearer Token", apiKey))
+			.addSecurityItem(securityRequirement);
 	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder(){
 		return new BCryptPasswordEncoder();
 	}
+
 
 
 }

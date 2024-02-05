@@ -36,4 +36,13 @@ public class TravelStyle {
 		this.vehiclePreferFlag = vehiclePreferFlag;
 		this.photoPreferFlag = photoPreferFlag;
 	}
+
+	public void editStyle(boolean leisurePreferFlag, boolean planPreferFlag, boolean adventurePreferFlag,
+		boolean vehiclePreferFlag, boolean photoPreferFlag) {
+		this.leisurePreferFlag = leisurePreferFlag;
+		this.planPreferFlag = planPreferFlag;
+		this.adventurePreferFlag = adventurePreferFlag;
+		this.vehiclePreferFlag = vehiclePreferFlag;
+		this.photoPreferFlag = photoPreferFlag;
+	}
 }

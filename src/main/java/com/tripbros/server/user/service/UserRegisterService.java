@@ -8,8 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tripbros.server.common.dto.BaseResponse;
 import com.tripbros.server.enumerate.Role;
+import com.tripbros.server.security.SecurityUser;
 import com.tripbros.server.user.domain.TravelStyle;
 import com.tripbros.server.user.domain.User;
+import com.tripbros.server.user.dto.EditUserInfoRequest;
 import com.tripbros.server.user.dto.RegisterRequest;
 import com.tripbros.server.user.enumerate.UserResultMessage;
 import com.tripbros.server.user.exception.RegisterException;
@@ -28,14 +30,12 @@ public class UserRegisterService {
 	private final TravelStyleRepository styleRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public ResponseEntity<BaseResponse<Object>> register(RegisterRequest request) {
+	public Object register(RegisterRequest request) {
 		validateRequest(request);
 		User user = request.toEntity(passwordEncoder.encode(request.password()), saveTravelStyle(request),
 			Role.ROLE_USER);
 		userRepository.save(user);
-		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
-			UserResultMessage.REGISTER_SUCCESS.getMessage(), null);
-		return ResponseEntity.ok().body(response);
+		return null;
 	}
 
 	private TravelStyle saveTravelStyle(RegisterRequest request) {
@@ -49,10 +49,26 @@ public class UserRegisterService {
 		return styleRepository.save(style);
 	}
 
+	//변경 감지 되나요
+	public Object editInfo(EditUserInfoRequest request, SecurityUser securityUser) {
+		User user = securityUser.getUser();
+		if (request.password() != null && !request.password().isBlank())
+			user.editPassword(passwordEncoder.encode(request.password()));
+		if (request.nickname() != null && !request.nickname().isBlank()){
+			checkNicknameDuplication(request.nickname());
+			user.editNickname(request.nickname());
+		}
+		if (request.profileImage() != null && !request.profileImage().isBlank())
+			user.editProfileImage(user.getProfileImage());
+		user.getTravelStyle()
+			.editStyle(request.leisurePreferFlag(), request.planPreferFlag(), request.adventurePreferFlag(),
+				request.vehiclePreferFlag(), request.photoPreferFlag());
+		return null;
+	}
+
 	private void validateRequest(RegisterRequest request) {
 		checkEmailDuplication(request.email());
 		checkNicknameDuplication(request.nickname());
-
 		//TODO : password-rule체크 ?
 	}
 
@@ -65,6 +81,7 @@ public class UserRegisterService {
 		if (userRepository.existsByNickname(nickname))
 			throw new RegisterException(UserExceptionMessage.NICKNAME_ALREADY_EXIST.getMessage());
 	}
+
 
 
 }
