@@ -27,10 +27,11 @@ public class ScheduleService {
 	private final ScheduleRepository scheduleRepository;
 	private final LocateRepository locateRepository;
 
-	public void createSchedule(User user, CreateScheduleRequestDTO createScheduleRequestDTO){
+	public Schedule createSchedule(User user, CreateScheduleRequestDTO createScheduleRequestDTO){
 		Schedule schedule = createScheduleRequestDTO.toEntity(user, locateRepository);
 		scheduleRepository.save(schedule);
 		log.info("success to create schedule");
+		return schedule;
 	}
 
 	// public ResponseEntity<BaseResponse<Object>> editSchedule(User user, EditScheduleRequestDTO editScheduleRequestDTO){
