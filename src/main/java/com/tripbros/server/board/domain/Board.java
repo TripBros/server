@@ -1,6 +1,9 @@
 package com.tripbros.server.board.domain;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.tripbros.server.schedule.domain.Schedule;
 import com.tripbros.server.user.domain.User;
@@ -8,8 +11,12 @@ import com.tripbros.server.enumerate.Age;
 import com.tripbros.server.enumerate.Purpose;
 import com.tripbros.server.enumerate.Sex;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,29 +46,46 @@ public class Board {
 	@Column(columnDefinition = "TEXT")
 	private String content;
 
+	@Enumerated(EnumType.STRING)
+	private Purpose purpose;
+
 	private String title;
 	private Long requiredHeadCount;
-	private Purpose purpose;
+
 	private boolean deadlineReachedFlag;
 	private Long bookmarked;
+
+	@Enumerated(EnumType.STRING)
 	private Sex preferSex;
-	private Age preferAge; // Age enum 미정
-	private Date createdAt;
+
+	@ElementCollection
+	@Enumerated(EnumType.STRING)
+	private List<Age> preferAgeRange = new ArrayList<>();
+
+	private LocalDate deadlineDate;
+	private LocalDate startDate;
+	private LocalDate endDate;
+
+	private LocalDate createdAt;
 	private Long hit;
 
 	@Builder
-	public Board(User user, Schedule schedule, String content, String title, Long requiredHeadCount, Purpose purpose,
-		boolean deadlineReachedFlag, Long bookmarked, Sex preferSex, Age preferAge, Date createdAt, Long hit) {
+	public Board(User user, Schedule schedule, String content, Purpose purpose, String title, Long requiredHeadCount,
+		boolean deadlineReachedFlag, Long bookmarked, Sex preferSex, List<Age> preferAgeRange, LocalDate deadlineDate,
+		LocalDate startDate, LocalDate endDate, LocalDate createdAt, Long hit) {
 		this.user = user;
 		this.schedule = schedule;
 		this.content = content;
+		this.purpose = purpose;
 		this.title = title;
 		this.requiredHeadCount = requiredHeadCount;
-		this.purpose = purpose;
 		this.deadlineReachedFlag = deadlineReachedFlag;
 		this.bookmarked = bookmarked;
 		this.preferSex = preferSex;
-		this.preferAge = preferAge;
+		this.preferAgeRange = preferAgeRange;
+		this.deadlineDate = deadlineDate;
+		this.startDate = startDate;
+		this.endDate = endDate;
 		this.createdAt = createdAt;
 		this.hit = hit;
 	}
