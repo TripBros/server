@@ -55,4 +55,15 @@ public class CustomExceptionHandler {
 			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, e.getMessage(), null));
 	}
 
+	@ExceptionHandler(UserPermissionException.class)
+	public ResponseEntity<BaseResponse<Object>> handler(UserPermissionException e){
+		StackTraceElement[] stackTrace = e.getStackTrace();
+		String className = stackTrace[0].getClassName();
+		String methodName = stackTrace[0].getMethodName();
+		String message = "예외 발생 위치: "+className+"."+methodName;
+
+		return ResponseEntity.badRequest()
+			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, "사용자 권한이 유효하지 않습니다.", message));
+	}
+
 }
