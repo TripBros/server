@@ -49,14 +49,19 @@ public class ScheduleController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	// @PostMapping("/edit")
-	// @Operation(summary = "일정 수정")
-	// public ResponseEntity<BaseResponse<Object>> editSchedule(@AuthUser SecurityUser user, @RequestBody @Valid EditScheduleRequestDTO editScheduleRequestDTO, Errors errors){
-	// 	if (errors.hasErrors())
-	// 		throw new ValidationFailException(errors);
-	//
-	// 	return scheduleService.editSchedule(user.getUser(), editScheduleRequestDTO);
-	// }
+	@PostMapping("/edit")
+	@Operation(summary = "일정 수정")
+	public ResponseEntity<BaseResponse<Object>> editSchedule(@AuthUser SecurityUser user, @RequestBody @Valid EditScheduleRequestDTO editScheduleRequestDTO, Errors errors){
+		if (errors.hasErrors())
+			throw new ScheduleRequestException(errors);
+
+		scheduleService.editSchedule(user.getUser(), editScheduleRequestDTO);
+
+		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
+			ScheduleResultMessage.EDIT_SCHEDULE_SUCCESS.getMessage(), null);
+
+		return ResponseEntity.ok().body(response);
+	}
 
 	@GetMapping("/list")
 	@Operation(summary = "일정 조회")

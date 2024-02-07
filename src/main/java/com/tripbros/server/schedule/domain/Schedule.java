@@ -3,6 +3,7 @@ package com.tripbros.server.schedule.domain;
 import java.time.LocalDate;
 
 import com.tripbros.server.recommend.domain.Locate;
+import com.tripbros.server.schedule.dto.EditScheduleRequestDTO;
 import com.tripbros.server.user.domain.User;
 
 import jakarta.persistence.Column;
@@ -52,5 +53,14 @@ public class Schedule {
 		this.boardMappedFlag = false;
 		this.readOnlyFlag = readOnlyFlag;
 		this.memo = memo;
+	}
+
+	public Schedule editSchedule(EditScheduleRequestDTO requestDTO, Locate locate){
+		this.title = requestDTO.title();
+		this.locate = locate;
+		this.startDate = requestDTO.startDate();
+		this.endDate = requestDTO.endDate();
+		this.memo = requestDTO.memo();
+		return this;
 	}
 }

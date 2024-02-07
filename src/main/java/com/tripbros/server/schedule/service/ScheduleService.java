@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.tripbros.server.recommend.domain.Locate;
 import com.tripbros.server.recommend.repository.LocateRepository;
 import com.tripbros.server.schedule.domain.Schedule;
 import com.tripbros.server.schedule.dto.CreateScheduleRequestDTO;
+import com.tripbros.server.schedule.dto.EditScheduleRequestDTO;
 import com.tripbros.server.schedule.dto.GetScheduleResponseDTO;
 import com.tripbros.server.schedule.exception.SchedulePermissionException;
 import com.tripbros.server.schedule.repository.ScheduleRepository;
@@ -34,19 +36,24 @@ public class ScheduleService {
 		return schedule;
 	}
 
-	// public ResponseEntity<BaseResponse<Object>> editSchedule(User user, EditScheduleRequestDTO editScheduleRequestDTO){
-	// 	// TODO : 일정 수정 관련 회의 필요
-	// 	scheduleRepository.deleteById(editScheduleRequestDTO.id());
-	//
-	// 	Schedule schedule = editScheduleRequestDTO.toEntity(user,locateRepository);
-	// 	scheduleRepository.save(schedule);
-	//
-	// 	BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
-	// 		ScheduleResultMessage.UPDATE_SCHEDULE_SUCCESS.getMessage(), null);
-	//
-	// 	log.info("success to edit schedule");
-	// 	return ResponseEntity.ok().body(response);
-	// }
+	public Schedule editSchedule(User user, EditScheduleRequestDTO editScheduleRequestDTO){
+		// TODO : 일정 수정 관련 회의 필요
+		Optional<Schedule> target = scheduleRepository.findById(editScheduleRequestDTO.id());
+		if(target.isPresent()) {
+			if (user.getId().equals(target.get().getUser().getId())) {
+				Locate modifiedLocate = locateRepository.findByCountryAndCity(editScheduleRequestDTO.country(),
+					editScheduleRequestDTO.city());
+				Schedule result = target.get().editSchedule(editScheduleRequestDTO, modifiedLocate);
+
+				log.info("success to edit schedule");
+				return result;
+			}
+			else
+				throw new SchedulePermissionException("사용자 권한이 유효하지 않습니다.");
+		}
+		else
+			throw new SchedulePermissionException("존재하지 않은 일정입니다.");
+	}
 
 	public List<GetScheduleResponseDTO> getSchedules(User user){
 		List<Schedule> scheduleList = scheduleRepository.findAllByUser(user);
