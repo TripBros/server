@@ -14,10 +14,6 @@ import com.tripbros.server.security.JwtFilter;
 import com.tripbros.server.security.TokenProvider;
 import com.tripbros.server.security.UserDetailsServiceImpl;
 
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -40,21 +36,7 @@ public class SecurityConfig {
 		return httpSecurity.build();
 
 	}
-	@Bean
-	public OpenAPI api() {
-		SecurityScheme apiKey = new SecurityScheme()
-			.type(SecurityScheme.Type.HTTP)
-			.scheme("bearer").bearerFormat("JWT")
-			.in(SecurityScheme.In.HEADER)
-			.name("Authorization");
 
-		SecurityRequirement securityRequirement = new SecurityRequirement()
-			.addList("Bearer Token");
-
-		return new OpenAPI()
-			.components(new Components().addSecuritySchemes("Bearer Token", apiKey))
-			.addSecurityItem(securityRequirement);
-	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder(){

@@ -1,19 +1,15 @@
 package com.tripbros.server.user.service;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tripbros.server.common.dto.BaseResponse;
 import com.tripbros.server.enumerate.Role;
 import com.tripbros.server.security.SecurityUser;
 import com.tripbros.server.user.domain.TravelStyle;
 import com.tripbros.server.user.domain.User;
 import com.tripbros.server.user.dto.EditUserInfoRequest;
 import com.tripbros.server.user.dto.RegisterRequest;
-import com.tripbros.server.user.enumerate.UserResultMessage;
 import com.tripbros.server.user.exception.RegisterException;
 import com.tripbros.server.user.exception.UserExceptionMessage;
 import com.tripbros.server.user.repository.TravelStyleRepository;
@@ -63,6 +59,8 @@ public class UserRegisterService {
 		user.getTravelStyle()
 			.editStyle(request.leisurePreferFlag(), request.planPreferFlag(), request.adventurePreferFlag(),
 				request.vehiclePreferFlag(), request.photoPreferFlag());
+		styleRepository.save(user.getTravelStyle());
+		userRepository.save(user);
 		return null;
 	}
 

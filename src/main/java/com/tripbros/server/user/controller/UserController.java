@@ -46,6 +46,7 @@ public class UserController {
 			throw new ValidationFailException(errors);
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
 			UserResultMessage.REGISTER_SUCCESS.getMessage(), registerService.register(request));
+		System.out.println();
 		return ResponseEntity.ok().body(response);
 	}
 
