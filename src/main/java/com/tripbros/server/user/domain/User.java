@@ -58,4 +58,16 @@ public class User {
 		this.role = role;
 		this.travelStyle = travelStyle;
 	}
+
+	public void editPassword(String password) {
+		this.password = password;
+	}
+
+	public void editNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void editProfileImage(byte[] profileImage) {
+		this.profileImage = profileImage;
+	}
 }

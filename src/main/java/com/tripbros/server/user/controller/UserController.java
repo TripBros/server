@@ -1,13 +1,11 @@
 package com.tripbros.server.user.controller;
 
-import com.tripbros.server.security.AuthUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbros.server.common.dto.BaseResponse;
 import com.tripbros.server.common.exception.ValidationFailException;
+import com.tripbros.server.security.AuthUser;
 import com.tripbros.server.security.JwtDTO;
 import com.tripbros.server.security.SecurityUser;
+import com.tripbros.server.user.dto.EditUserInfoRequest;
 import com.tripbros.server.user.dto.RegisterRequest;
 import com.tripbros.server.user.dto.SignInRequest;
+import com.tripbros.server.user.enumerate.UserResultMessage;
 import com.tripbros.server.user.service.UserRegisterService;
 import com.tripbros.server.user.service.UserService;
 
@@ -43,7 +44,20 @@ public class UserController {
 	public ResponseEntity<BaseResponse<Object>> register(@Valid @RequestBody RegisterRequest request, Errors errors) {
 		if (errors.hasErrors())
 			throw new ValidationFailException(errors);
-		return registerService.register(request);
+		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
+			UserResultMessage.REGISTER_SUCCESS.getMessage(), registerService.register(request));
+		return ResponseEntity.ok().body(response);
+	}
+
+	@PatchMapping
+	@Operation(summary = "회원 정보 수정")
+	public ResponseEntity<BaseResponse<Object>> editInfo(@Valid @RequestBody EditUserInfoRequest request,
+		Errors errors, @AuthUser SecurityUser user) {
+		if (errors.hasErrors())
+			throw new ValidationFailException(errors);
+		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
+			UserResultMessage.REGISTER_SUCCESS.getMessage(), registerService.editInfo(request, user));
+		return ResponseEntity.ok().body(response);
 	}
 
 	@GetMapping("/email-check")

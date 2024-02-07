@@ -14,9 +14,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tripbros.server.common.dto.BaseResponse;
 import com.tripbros.server.enumerate.Sex;
+import com.tripbros.server.security.SecurityUser;
+import com.tripbros.server.user.domain.User;
+import com.tripbros.server.user.dto.EditUserInfoRequest;
 import com.tripbros.server.user.dto.RegisterRequest;
+import com.tripbros.server.user.enumerate.UserResultMessage;
 import com.tripbros.server.user.exception.RegisterException;
 import com.tripbros.server.user.exception.UserExceptionMessage;
+import com.tripbros.server.user.repository.UserRepository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @SpringBootTest
 @Transactional
@@ -24,6 +32,12 @@ class UserRegisterServiceTest {
 
 	@Autowired
 	private UserRegisterService service;
+
+	@Autowired
+	private UserRepository repository;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	private RegisterRequest request;
 	private ResponseEntity<BaseResponse<Object>> response;
@@ -42,7 +56,9 @@ class UserRegisterServiceTest {
 			, true
 			, "testimage");
 
-		response = service.register(request);
+		BaseResponse<Object> r = new BaseResponse<>(true, HttpStatus.OK,
+			UserResultMessage.REGISTER_SUCCESS.getMessage(), service.register(request));
+		response = ResponseEntity.ok(r);
 	}
 
 	@Test
@@ -114,6 +130,21 @@ class UserRegisterServiceTest {
 		Assertions.assertThatThrownBy(() -> service.checkNicknameDuplication("testnickname"))
 			.isInstanceOf(RegisterException.class)
 			.hasMessage(UserExceptionMessage.NICKNAME_ALREADY_EXIST.getMessage());
+
+	}
+
+	@Test
+	@DisplayName("회원 정보 수정")
+	void 정보수정(){
+		SecurityUser securityUser = new SecurityUser(repository.findByEmail(request.email()).get());
+		EditUserInfoRequest newRequest = new EditUserInfoRequest(null, "editestNickname!!!!", false, false, false,
+			false, false, null);
+		service.editInfo(newRequest, securityUser);
+		entityManager.flush();
+		entityManager.clear();
+
+		User user = repository.findByEmail(request.email()).get();
+		Assertions.assertThat(user.getNickname()).isEqualTo("editestNickname!!!!");
 
 	}
 }

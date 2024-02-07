@@ -1,6 +1,5 @@
 package com.tripbros.server.security;
 
-import java.lang.reflect.Array;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,7 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -34,14 +32,14 @@ public class TokenProvider {
 
 	protected static final String AUTHORITIES_KEY = "auth";
 
-	private  String secret; //시크릿 키 저장소
 	protected long tokenValidityInMilliseconds;
 	protected Key key;
-	@Autowired
-	private UserDetailsServiceImpl detailsService;
+	private final UserDetailsServiceImpl detailsService;
 
-	public TokenProvider(@Value("${jwt.secret_key}") String secret, @Value("${jwt.expiration_time}")  long tokenValidityInMilliseconds){
-		this.secret = secret;
+	@Autowired
+	public TokenProvider(@Value("${jwt.secret_key}") String secret, @Value("${jwt.expiration_time}")  long tokenValidityInMilliseconds, UserDetailsServiceImpl detailsService){
+		this.detailsService = detailsService;
+		//시크릿 키 저장소
 		this.tokenValidityInMilliseconds = tokenValidityInMilliseconds * 1000;
 		byte[] keyBytes = Decoders.BASE64.decode(secret); // base64 시크릿 키 디코딩
 		key = Keys.hmacShaKeyFor(keyBytes); // HMAC 암호화
