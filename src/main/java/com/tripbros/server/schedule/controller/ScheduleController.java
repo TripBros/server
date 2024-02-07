@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class ScheduleController {
 	private final ScheduleService scheduleService;
 
-	@PostMapping("/create")
+	@PostMapping
 	@Operation(summary = "일정 추가")
 	public ResponseEntity<BaseResponse<Object>> createSchedule(@AuthUser SecurityUser user, @RequestBody @Valid CreateScheduleRequestDTO createScheduleRequestDTO, Errors errors){
 		if (errors.hasErrors())
@@ -49,7 +50,7 @@ public class ScheduleController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	@PostMapping("/edit")
+	@PatchMapping
 	@Operation(summary = "일정 수정")
 	public ResponseEntity<BaseResponse<Object>> editSchedule(@AuthUser SecurityUser user, @RequestBody @Valid EditScheduleRequestDTO editScheduleRequestDTO, Errors errors){
 		if (errors.hasErrors())
@@ -63,7 +64,7 @@ public class ScheduleController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	@GetMapping("/list")
+	@GetMapping
 	@Operation(summary = "일정 조회")
 	public ResponseEntity<BaseResponse<List<GetScheduleResponseDTO>>> getSchedules(@AuthUser SecurityUser user){
 		List<GetScheduleResponseDTO> responseList = scheduleService.getSchedules(user.getUser());
@@ -73,7 +74,7 @@ public class ScheduleController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	@DeleteMapping("/delete")
+	@DeleteMapping
 	@Operation(summary = "일정 삭제")
 	public ResponseEntity<BaseResponse<Object>> deleteSchedule(@AuthUser SecurityUser user, @RequestBody @Valid Map<String,Long> request, Errors errors){
 		if (errors.hasErrors())
