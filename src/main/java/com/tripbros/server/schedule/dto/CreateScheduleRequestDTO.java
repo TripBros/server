@@ -29,7 +29,7 @@ public record CreateScheduleRequestDTO(@NotBlank(message = "일정 제목은 필
 			.locate(locate)
 			.startDate(startDate)
 			.endDate(endDate)
-			.readOnlyFlag(false)
+			.hostFlag(true)
 			.memo(memo)
 			.build();
 	}
