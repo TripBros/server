@@ -3,6 +3,7 @@ package com.tripbros.server.schedule.domain;
 import java.time.LocalDate;
 
 import com.tripbros.server.recommend.domain.Locate;
+import com.tripbros.server.schedule.dto.EditScheduleRequestDTO;
 import com.tripbros.server.user.domain.User;
 
 import jakarta.persistence.Column;
@@ -36,20 +37,30 @@ public class Schedule {
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private boolean boardMappedFlag;
+	private boolean readOnlyFlag;
 
 	@Column(columnDefinition = "TEXT")
 	private String memo;
 
 	@Builder
 	public Schedule(User user, Locate locate, String title, LocalDate startDate, LocalDate endDate,
-		boolean boardMappedFlag,
-		String memo) {
+		boolean readOnlyFlag, String memo) {
 		this.user = user;
 		this.locate = locate;
 		this.title = title;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.boardMappedFlag = boardMappedFlag;
+		this.boardMappedFlag = false;
+		this.readOnlyFlag = readOnlyFlag;
 		this.memo = memo;
+	}
+
+	public Schedule editSchedule(EditScheduleRequestDTO requestDTO, Locate locate){
+		this.title = requestDTO.title();
+		this.locate = locate;
+		this.startDate = requestDTO.startDate();
+		this.endDate = requestDTO.endDate();
+		this.memo = requestDTO.memo();
+		return this;
 	}
 }
