@@ -2,7 +2,6 @@ package com.tripbros.server.board.domain;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.tripbros.server.schedule.domain.Schedule;
@@ -11,7 +10,6 @@ import com.tripbros.server.enumerate.Age;
 import com.tripbros.server.enumerate.Purpose;
 import com.tripbros.server.enumerate.Sex;
 
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -50,9 +48,9 @@ public class Board {
 	private Purpose purpose;
 
 	private String title;
-	private Long requiredHeadCount;
+	private Integer requiredHeadCount;
 
-	private boolean deadlineReachedFlag;
+	private Boolean deadlineReachedFlag;
 	private Long bookmarked;
 
 	@Enumerated(EnumType.STRING)
@@ -62,17 +60,13 @@ public class Board {
 	@Enumerated(EnumType.STRING)
 	private List<Age> preferAgeRange = new ArrayList<>();
 
-	private LocalDate deadlineDate;
-	private LocalDate startDate;
-	private LocalDate endDate;
-
 	private LocalDate createdAt;
 	private Long hit;
 
 	@Builder
-	public Board(User user, Schedule schedule, String content, Purpose purpose, String title, Long requiredHeadCount,
-		boolean deadlineReachedFlag, Long bookmarked, Sex preferSex, List<Age> preferAgeRange, LocalDate deadlineDate,
-		LocalDate startDate, LocalDate endDate, LocalDate createdAt, Long hit) {
+	public Board(User user, Schedule schedule, String content, Purpose purpose, String title, Integer requiredHeadCount,
+		Boolean deadlineReachedFlag, Long bookmarked, Sex preferSex, List<Age> preferAgeRange, LocalDate createdAt,
+		Long hit) {
 		this.user = user;
 		this.schedule = schedule;
 		this.content = content;
@@ -83,9 +77,6 @@ public class Board {
 		this.bookmarked = bookmarked;
 		this.preferSex = preferSex;
 		this.preferAgeRange = preferAgeRange;
-		this.deadlineDate = deadlineDate;
-		this.startDate = startDate;
-		this.endDate = endDate;
 		this.createdAt = createdAt;
 		this.hit = hit;
 	}
