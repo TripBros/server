@@ -36,22 +36,25 @@ public class Schedule {
 	private String title;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	private boolean boardMappedFlag;
-	private boolean readOnlyFlag;
+
+	private boolean hostFlag;
+
+	@ManyToOne
+	@JoinColumn(name = "host_id")
+	private Schedule host;
 
 	@Column(columnDefinition = "TEXT")
 	private String memo;
 
 	@Builder
-	public Schedule(User user, Locate locate, String title, LocalDate startDate, LocalDate endDate,
-		boolean readOnlyFlag, String memo) {
+	public Schedule(User user, Locate locate, String title, LocalDate startDate, LocalDate endDate, boolean hostFlag,
+		String memo) {
 		this.user = user;
 		this.locate = locate;
 		this.title = title;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.boardMappedFlag = false;
-		this.readOnlyFlag = readOnlyFlag;
+		this.hostFlag = hostFlag;
 		this.memo = memo;
 	}
 
@@ -61,6 +64,11 @@ public class Schedule {
 		this.startDate = requestDTO.startDate();
 		this.endDate = requestDTO.endDate();
 		this.memo = requestDTO.memo();
+		return this;
+	}
+
+	public Schedule setHost(Schedule host){
+		this.host = host;
 		return this;
 	}
 }
