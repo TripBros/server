@@ -1,7 +1,5 @@
 package com.tripbros.server.user.domain;
 
-import org.hibernate.annotations.CollectionId;
-
 import com.tripbros.server.enumerate.Role;
 import com.tripbros.server.enumerate.Sex;
 
@@ -14,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,8 +31,7 @@ public class User {
 	private String nickname;
 	private Long age;
 
-	@Lob
-	private byte[] profileImage;
+	private String profileImage;
 
 	@Enumerated(EnumType.STRING)
 	private Sex sex;
@@ -48,7 +44,7 @@ public class User {
 	private Role role;
 
 	@Builder
-	public User(String email, String password, String nickname, Long age, byte[] profileImage, Sex sex, TravelStyle travelStyle, Role role) {
+	public User(String email, String password, String nickname, Long age, String profileImage, Sex sex, TravelStyle travelStyle, Role role) {
 		this.email = email;
 		this.password = password;
 		this.nickname = nickname;
@@ -67,7 +63,7 @@ public class User {
 		this.nickname = nickname;
 	}
 
-	public void editProfileImage(byte[] profileImage) {
+	public void editProfileImage(String profileImage) {
 		this.profileImage = profileImage;
 	}
 }

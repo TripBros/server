@@ -4,13 +4,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tripbros.server.common.dto.BaseResponse;
 import com.tripbros.server.common.exception.ValidationFailException;
@@ -39,25 +42,30 @@ public class UserController {
 	private final UserRegisterService registerService;
 	private final UserService userService;
 
-	@PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/register", consumes = {
+		MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "회원 가입")
-	public ResponseEntity<BaseResponse<Object>> register(@Valid @RequestBody RegisterRequest request, Errors errors) {
+	public ResponseEntity<BaseResponse<Object>> register(
+		@Valid @RequestPart RegisterRequest registerRequest,
+		Errors errors,
+		@RequestPart MultipartFile image) {
 		if (errors.hasErrors())
 			throw new ValidationFailException(errors);
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
-			UserResultMessage.REGISTER_SUCCESS.getMessage(), registerService.register(request));
-		System.out.println();
+			UserResultMessage.REGISTER_SUCCESS.getMessage(), registerService.register(registerRequest, image));
 		return ResponseEntity.ok().body(response);
 	}
 
-	@PatchMapping
+	@PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	@Operation(summary = "회원 정보 수정")
-	public ResponseEntity<BaseResponse<Object>> editInfo(@Valid @RequestBody EditUserInfoRequest request,
-		Errors errors, @AuthUser SecurityUser user) {
+	public ResponseEntity<BaseResponse<Object>> editInfo(@Valid @RequestPart EditUserInfoRequest editUserInfoRequest,
+		Errors errors,
+		@RequestPart(required = false) MultipartFile image,
+		@AuthUser SecurityUser user) {
 		if (errors.hasErrors())
 			throw new ValidationFailException(errors);
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
-			UserResultMessage.REGISTER_SUCCESS.getMessage(), registerService.editInfo(request, user));
+			UserResultMessage.REGISTER_SUCCESS.getMessage(), registerService.editInfo(editUserInfoRequest, image, user));
 		return ResponseEntity.ok().body(response);
 	}
 
@@ -82,9 +90,16 @@ public class UserController {
 		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, token));
 	}
 
+	@DeleteMapping
+	@Operation(summary = "회원 탈퇴")
+	public ResponseEntity<BaseResponse<Object>> resignUser(@AuthUser SecurityUser user ,@RequestParam String password){
+		registerService.deleteUser(user.getUser(), password); //중복시 Exception Throw
+		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, null));
+	}
+
 	@GetMapping("/test") // 테스트 온리 컨트롤러
 	@Operation(summary = "백엔드 자체 테스트 전용 API 입니다.")
-	public String test(@AuthUser SecurityUser user) {
-		return user.getUser().getNickname();
+	public String  test(@AuthUser SecurityUser user) {
+		return user.getUser().getProfileImage();
 	}
 }

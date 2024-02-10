@@ -1,7 +1,5 @@
 package com.tripbros.server.user.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -136,7 +134,7 @@ class UserRegisterServiceTest {
 	@Test
 	@DisplayName("회원 정보 수정")
 	void 정보수정(){
-		SecurityUser securityUser = new SecurityUser(repository.findByEmail(request.email()).get());
+		SecurityUser securityUser = new SecurityUser(repository.findByEmail(request.email()).orElseThrow(() -> new RegisterException("err")));
 		EditUserInfoRequest newRequest = new EditUserInfoRequest(null, "editestNickname!!!!", false, false, false,
 			false, false, null);
 		service.editInfo(newRequest, securityUser);

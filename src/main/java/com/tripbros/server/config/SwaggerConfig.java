@@ -1,8 +1,12 @@
 package com.tripbros.server.config;
 
+import java.util.ArrayList;
+
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -21,6 +25,11 @@ public class SwaggerConfig {
 			.group("TripBros API V1")
 			.pathsToMatch("/**")
 			.build();
+	}
+	public SwaggerConfig(MappingJackson2HttpMessageConverter converter) {
+		var supportedMediaTypes = new ArrayList<>(converter.getSupportedMediaTypes());
+		supportedMediaTypes.add(new MediaType("application", "octet-stream"));
+		converter.setSupportedMediaTypes(supportedMediaTypes);
 	}
 
 	@Bean
