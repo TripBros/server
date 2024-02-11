@@ -14,4 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
 	Optional<User> findByEmail(String email);
+
+	@Query("select u from User u join fetch u.travelStyle where u.id = :id")
+	User findByIdWithTravelStyle(Long id);
 }

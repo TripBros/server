@@ -43,6 +43,11 @@ dependencies {
 
 	//chat
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	implementation 'com.azure.spring:spring-cloud-azure-dependencies:5.9.0'
+
+	implementation 'com.azure.spring:spring-cloud-azure-starter-storage-blob:5.8.0'
+
 }
 
 tasks.named('test') {
