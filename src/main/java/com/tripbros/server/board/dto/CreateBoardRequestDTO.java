@@ -1,6 +1,7 @@
 package com.tripbros.server.board.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.tripbros.server.board.domain.Board;
@@ -36,7 +37,7 @@ public record CreateBoardRequestDTO(@NotBlank(message = "게시글 제목은 필
 			.requiredHeadCount(requiredHeadCount)
 			.preferSex(preferSex)
 			.preferAgeRange(preferAgeRange)
-			.createdAt(LocalDate.now())
+			.createdAt(LocalDateTime.now())
 			.deadlineReachedFlag(false)
 			.hit(0L)
 			.bookmarked(0L)

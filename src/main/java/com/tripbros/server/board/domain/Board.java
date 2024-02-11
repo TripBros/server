@@ -1,6 +1,6 @@
 package com.tripbros.server.board.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,12 +61,12 @@ public class Board {
 	@Enumerated(EnumType.STRING)
 	private List<Age> preferAgeRange = new ArrayList<>();
 
-	private LocalDate createdAt;
+	private LocalDateTime createdAt;
 	private Long hit;
 
 	@Builder
 	public Board(User user, Schedule schedule, String content, Purpose purpose, String title, Integer requiredHeadCount,
-		Boolean deadlineReachedFlag, Long bookmarked, Sex preferSex, List<Age> preferAgeRange, LocalDate createdAt,
+		Boolean deadlineReachedFlag, Long bookmarked, Sex preferSex, List<Age> preferAgeRange, LocalDateTime createdAt,
 		Long hit) {
 		this.user = user;
 		this.schedule = schedule;
