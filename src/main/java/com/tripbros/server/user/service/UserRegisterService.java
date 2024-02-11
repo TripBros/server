@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tripbros.server.enumerate.Role;
 import com.tripbros.server.security.SecurityExceptionMessage;
-import com.tripbros.server.security.SecurityUser;
 import com.tripbros.server.security.UnauthorizedAccessException;
 import com.tripbros.server.user.domain.TravelStyle;
 import com.tripbros.server.user.domain.User;
@@ -32,13 +31,12 @@ public class UserRegisterService {
 	private final PasswordEncoder passwordEncoder;
 	private final ImageService imageService;
 
-	public Object register(RegisterRequest request, MultipartFile image) {
+	public User register(RegisterRequest request, MultipartFile image) {
 		validateRequest(request);
 		User user = request.toEntity(passwordEncoder.encode(request.password()),
 			imageService.uploadImageAndGetName(image), saveTravelStyle(request),
 			Role.ROLE_USER);
-		userRepository.save(user);
-		return null;
+		return userRepository.save(user);
 	}
 
 	private TravelStyle saveTravelStyle(RegisterRequest request) {
@@ -53,8 +51,8 @@ public class UserRegisterService {
 	}
 
 	//변경 감지 되나요
-	public Object editInfo(EditUserInfoRequest request, MultipartFile image, SecurityUser securityUser) {
-		User user = userRepository.findByIdWithTravelStyle(securityUser.getUser().getId());
+	public User editInfo(EditUserInfoRequest request, MultipartFile image, User detachedUser) {
+		User user = userRepository.findByIdWithTravelStyle(detachedUser.getId());
 		if (request.password() != null && !request.password().isBlank())
 			user.editPassword(passwordEncoder.encode(request.password()));
 		if (request.nickname() != null && !request.nickname().isBlank()){
@@ -68,8 +66,7 @@ public class UserRegisterService {
 		user.getTravelStyle()
 			.editStyle(request.leisurePreferFlag(), request.planPreferFlag(), request.adventurePreferFlag(),
 				request.vehiclePreferFlag(), request.photoPreferFlag());
-
-		return null;
+		return user;
 	}
 
 	private void validateRequest(RegisterRequest request) {
@@ -89,13 +86,12 @@ public class UserRegisterService {
 			throw new RegisterException(UserExceptionMessage.NICKNAME_ALREADY_EXIST.getMessage());
 	}
 
-	public Object deleteUser(User user, String password) {
+	public void deleteUser(User user, String password) {
 		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new UnauthorizedAccessException(SecurityExceptionMessage.UNAUTHORIZED.getMessage());
 		}
 		imageService.deleteImage(user.getProfileImage());
 		userRepository.delete(user);
-		return null;
 	}
 
 

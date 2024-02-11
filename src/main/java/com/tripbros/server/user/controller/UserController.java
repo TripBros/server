@@ -51,8 +51,9 @@ public class UserController {
 		@RequestPart MultipartFile image) {
 		if (errors.hasErrors())
 			throw new ValidationFailException(errors);
+		registerService.register(registerRequest, image);
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
-			UserResultMessage.REGISTER_SUCCESS.getMessage(), registerService.register(registerRequest, image));
+			UserResultMessage.REGISTER_SUCCESS.getMessage(), null);
 		return ResponseEntity.ok().body(response);
 	}
 
@@ -64,8 +65,9 @@ public class UserController {
 		@AuthUser SecurityUser user) {
 		if (errors.hasErrors())
 			throw new ValidationFailException(errors);
+		registerService.editInfo(editUserInfoRequest, image, user.getUser());
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
-			UserResultMessage.REGISTER_SUCCESS.getMessage(), registerService.editInfo(editUserInfoRequest, image, user));
+			UserResultMessage.EDIT_USERINFO_SUCCESS.getMessage(), null);
 		return ResponseEntity.ok().body(response);
 	}
 
@@ -93,7 +95,7 @@ public class UserController {
 	@DeleteMapping
 	@Operation(summary = "회원 탈퇴")
 	public ResponseEntity<BaseResponse<Object>> resignUser(@AuthUser SecurityUser user ,@RequestParam String password){
-		registerService.deleteUser(user.getUser(), password); //중복시 Exception Throw
+		registerService.deleteUser(user.getUser(), password);
 		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, null));
 	}
 
