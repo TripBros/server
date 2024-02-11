@@ -43,7 +43,8 @@ public class ScheduleService {
 
 		Schedule schedule = target.orElseThrow(
 			() -> new SchedulePermissionException("존재하지 않은 일정입니다."));
-		checkUserPermission(user, schedule);
+		if(user != null)
+			checkUserPermission(user, schedule);
 
 		Locate modifiedLocate = locateRepository.findByCountryAndCity(editScheduleRequestDTO.country(), editScheduleRequestDTO.city());
 		Schedule result = target.get().editSchedule(editScheduleRequestDTO, modifiedLocate);
@@ -67,7 +68,8 @@ public class ScheduleService {
 
 		Schedule schedule = target.orElseThrow(
 			() -> new SchedulePermissionException("존재하지 않은 일정입니다."));
-		checkUserPermission(user, schedule);
+		if(user != null)
+			checkUserPermission(user, schedule);
 
 		scheduleRepository.deleteById(scheduleId);
 
