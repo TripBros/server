@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tripbros.server.board.dto.EditBoardRequestDTO;
 import com.tripbros.server.schedule.domain.Schedule;
 import com.tripbros.server.user.domain.User;
 import com.tripbros.server.enumerate.Age;
@@ -79,5 +80,17 @@ public class Board {
 		this.preferAgeRange = preferAgeRange;
 		this.createdAt = createdAt;
 		this.hit = hit;
+	}
+
+	public Board editBoard(EditBoardRequestDTO editBoardRequestDTO, Schedule schedule){
+		this.title = editBoardRequestDTO.title();
+		this.content = editBoardRequestDTO.content();
+		this.schedule = schedule;
+		this.purpose = editBoardRequestDTO.purpose();
+		this.preferAgeRange = editBoardRequestDTO.preferAgeRange();
+		this.requiredHeadCount = editBoardRequestDTO.requiredHeadCount();
+		this.preferSex = editBoardRequestDTO.preferSex();
+
+		return this;
 	}
 }

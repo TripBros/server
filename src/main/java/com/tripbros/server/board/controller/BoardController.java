@@ -3,14 +3,16 @@ package com.tripbros.server.board.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbros.server.board.dto.CreateBoardRequestDTO;
+import com.tripbros.server.board.dto.EditBoardRequestDTO;
 import com.tripbros.server.board.enumerate.BoardResultMessage;
-import com.tripbros.server.board.exception.BoardrequestException;
+import com.tripbros.server.board.exception.BoardRequestException;
 import com.tripbros.server.board.service.BoardService;
 import com.tripbros.server.common.dto.BaseResponse;
 import com.tripbros.server.security.AuthUser;
@@ -32,7 +34,7 @@ public class BoardController {
 	@Operation(summary = "게시글 작성")
 	public ResponseEntity<BaseResponse<Object>> createBoard(@AuthUser SecurityUser user, @RequestBody @Valid CreateBoardRequestDTO createBoardRequestDTO, Errors errors){
 		if (errors.hasErrors())
-			throw new BoardrequestException(errors);
+			throw new BoardRequestException(errors);
 
 		boardService.createBoard(user.getUser(), createBoardRequestDTO);
 
@@ -41,4 +43,19 @@ public class BoardController {
 
 		return ResponseEntity.ok().body(response);
 	}
+
+	@PatchMapping
+	@Operation(summary = "게시글 수정")
+	public ResponseEntity<BaseResponse<Object>> editBoard(@AuthUser SecurityUser user, @RequestBody @Valid EditBoardRequestDTO editBoardRequestDTO, Errors errors){
+		if(errors.hasErrors())
+			throw new BoardRequestException(errors);
+
+		boardService.editBoard(user.getUser(), editBoardRequestDTO);
+
+		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
+			BoardResultMessage.EDIT_BOARD_SUCCESS.getMessage(), null);
+
+		return ResponseEntity.ok().body(response);
+	}
+
 }

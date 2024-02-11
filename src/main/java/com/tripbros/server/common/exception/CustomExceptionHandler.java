@@ -3,7 +3,8 @@ package com.tripbros.server.common.exception;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import com.tripbros.server.board.exception.BoardrequestException;
+import com.tripbros.server.board.exception.BoardPermissionException;
+import com.tripbros.server.board.exception.BoardRequestException;
 import com.tripbros.server.schedule.exception.SchedulePermissionException;
 import com.tripbros.server.schedule.exception.ScheduleRequestException;
 import com.tripbros.server.security.UnauthorizedAccessException;
@@ -50,8 +51,8 @@ public class CustomExceptionHandler {
 			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, "잘못된 입력입니다.", messages));
 	}
 
-	@ExceptionHandler(BoardrequestException.class)
-	public ResponseEntity<BaseResponse<Object>> handler(BoardrequestException e){
+	@ExceptionHandler(BoardRequestException.class)
+	public ResponseEntity<BaseResponse<Object>> handler(BoardRequestException e){
 		ArrayList<String> messages = e.errors.getFieldErrors()
 			.stream()
 			.map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
@@ -60,11 +61,16 @@ public class CustomExceptionHandler {
 			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, "잘못된 입력입니다.", messages));
 	}
 
-
 	@ExceptionHandler(SchedulePermissionException.class)
 	public ResponseEntity<BaseResponse<Object>> handler(SchedulePermissionException e){
 		return ResponseEntity.badRequest()
 			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, e.getMessage(), null));
+	}
+
+	@ExceptionHandler(BoardPermissionException.class)
+	public ResponseEntity<BaseResponse<Object>> handler(BoardPermissionException e){
+		return ResponseEntity.badRequest()
+			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, e.getMessage(),null));
 	}
 
 	@ExceptionHandler(UserPermissionException.class)
