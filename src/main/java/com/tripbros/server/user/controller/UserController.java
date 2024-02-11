@@ -89,14 +89,16 @@ public class UserController {
 	@Operation(summary = "로그인")
 	public ResponseEntity<BaseResponse<JwtDTO>> signIn(@RequestBody SignInRequest request) {
 		JwtDTO token = userService.signIn(request);
-		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, token));
+		return ResponseEntity.ok()
+			.body(new BaseResponse<>(true, HttpStatus.OK, UserResultMessage.LOGIN_SUCCESS.getMessage(), token));
 	}
 
 	@DeleteMapping
 	@Operation(summary = "회원 탈퇴")
-	public ResponseEntity<BaseResponse<Object>> resignUser(@AuthUser SecurityUser user ,@RequestParam String password){
+	public ResponseEntity<BaseResponse<Object>> resignUser(@AuthUser SecurityUser user, @RequestParam String password){
 		registerService.deleteUser(user.getUser(), password);
-		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, null));
+		return ResponseEntity.ok()
+			.body(new BaseResponse<>(true, HttpStatus.OK, UserResultMessage.RESIGN_SUCCESS.getMessage(), null));
 	}
 
 	@GetMapping("/test") // 테스트 온리 컨트롤러
