@@ -1,8 +1,11 @@
 package com.tripbros.server.board.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,6 +57,21 @@ public class BoardController {
 
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
 			BoardResultMessage.EDIT_BOARD_SUCCESS.getMessage(), null);
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	@DeleteMapping
+	@Operation(summary = "게시글 삭제")
+	public ResponseEntity<BaseResponse<Object>> deleteBoard(@AuthUser SecurityUser user, @RequestBody @Valid Map<String, Long> request, Errors errors){
+		if(errors.hasErrors())
+			throw new BoardRequestException(errors);
+
+		Long boardId = request.get("id");
+		boardService.deleteBoard(user.getUser(), boardId);
+
+		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
+			BoardResultMessage.DELETE_BOARD_SUCCESS.getMessage(), null);
 
 		return ResponseEntity.ok().body(response);
 	}

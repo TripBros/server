@@ -66,6 +66,24 @@ public class BoardService {
 		return result;
 	}
 
+	public void deleteBoard(User user, Long boardId){
+		Optional<Board> target = boardRepository.findById(boardId);
+
+		Board board = target.orElseThrow(
+			() -> new BoardPermissionException("존재하지 않은 게시글 입니다."));
+		checkUserPermission(user, board);
+
+		// 게시글 삭제
+		boardRepository.delete(board);
+
+		// 일정 삭제
+		Schedule targetSchedule = board.getSchedule();
+		if(targetSchedule.getUser() == null)
+			scheduleService.deleteSchedule(null, targetSchedule.getId());
+
+		log.info("success to delete board");
+	}
+
 	private Schedule createCompanionSchedule (CreateBoardRequestDTO createBoardRequestDTO) {
 		String scheduleTitle = getCompanionTitle(createBoardRequestDTO.city(), createBoardRequestDTO.title());
 		CreateScheduleRequestDTO createScheduleRequest = new CreateScheduleRequestDTO(scheduleTitle,
