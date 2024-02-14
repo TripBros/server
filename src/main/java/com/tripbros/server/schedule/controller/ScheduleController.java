@@ -1,7 +1,6 @@
 package com.tripbros.server.schedule.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbros.server.common.dto.BaseResponse;
@@ -76,11 +76,10 @@ public class ScheduleController {
 
 	@DeleteMapping
 	@Operation(summary = "일정 삭제")
-	public ResponseEntity<BaseResponse<Object>> deleteSchedule(@AuthUser SecurityUser user, @RequestBody @Valid Map<String,Long> request, Errors errors){
+	public ResponseEntity<BaseResponse<Object>> deleteSchedule(@AuthUser SecurityUser user, @RequestParam Long scheduleId, Errors errors){
 		if (errors.hasErrors())
 			throw new ScheduleRequestException(errors);
 
-		Long scheduleId = request.get("id");
 		scheduleService.deleteSchedule(user.getUser(), scheduleId);
 
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
