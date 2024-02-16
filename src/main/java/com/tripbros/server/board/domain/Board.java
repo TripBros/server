@@ -50,6 +50,7 @@ public class Board {
 
 	private String title;
 	private Integer requiredHeadCount;
+	private Integer nowHeadCount;
 
 	private Boolean deadlineReachedFlag;
 	private Long bookmarked;
@@ -64,10 +65,14 @@ public class Board {
 	private LocalDateTime createdAt;
 	private Long hit;
 
+	private Long locateId;
+	private String locateName;
+	private String locateUrl;
+
 	@Builder
 	public Board(User user, Schedule schedule, String content, Purpose purpose, String title, Integer requiredHeadCount,
 		Boolean deadlineReachedFlag, Long bookmarked, Sex preferSex, List<Age> preferAgeRange, LocalDateTime createdAt,
-		Long hit) {
+		Long hit, Long locateId, String locateName, String locateUrl, Integer nowHeadCount) {
 		this.user = user;
 		this.schedule = schedule;
 		this.content = content;
@@ -80,6 +85,10 @@ public class Board {
 		this.preferAgeRange = preferAgeRange;
 		this.createdAt = createdAt;
 		this.hit = hit;
+		this.locateId = locateId;
+		this.locateName = locateName;
+		this.locateUrl = locateUrl;
+		this.nowHeadCount = nowHeadCount;
 	}
 
 	public Board editBoard(EditBoardRequestDTO editBoardRequestDTO, Schedule schedule){
