@@ -22,5 +22,8 @@ public record EditBoardRequestDTO(Long id,
 								  @NotNull(message = "일정 목적 선택은 필수입니다.") Purpose purpose,
 								  @NotNull(message = "동행 모집 인원은 필수 선택입니다.") Integer requiredHeadCount,
 								  @NotNull(message = "동행 선호 나이대는 필수 선택입니다.") List<Age> preferAgeRange,
-								  @NotNull(message = "동행 선호 성별은 필수 선택입니다.") Sex preferSex) {
+								  @NotNull(message = "동행 선호 성별은 필수 선택입니다.") Sex preferSex,
+								  Long locateId,
+								  String locateName,
+								  String locateUrl){
 }
