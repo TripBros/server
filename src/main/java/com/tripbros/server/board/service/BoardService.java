@@ -1,14 +1,17 @@
 package com.tripbros.server.board.service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.tripbros.server.board.domain.Board;
+import com.tripbros.server.board.domain.BookmarkedBoard;
 import com.tripbros.server.board.dto.CreateBoardRequestDTO;
 import com.tripbros.server.board.dto.EditBoardRequestDTO;
 import com.tripbros.server.board.exception.BoardPermissionException;
 import com.tripbros.server.board.repository.BoardRepository;
+import com.tripbros.server.board.repository.BookmarkedBoardRepository;
 import com.tripbros.server.common.exception.UserPermissionException;
 import com.tripbros.server.enumerate.City;
 import com.tripbros.server.schedule.domain.Schedule;
@@ -28,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class BoardService {
 
 	private final BoardRepository boardRepository;
+	private final BookmarkedBoardRepository bookmarkedBoardRepository;
 
 	private final ScheduleService scheduleService;
 
@@ -45,7 +49,7 @@ public class BoardService {
 		Optional<Board> target = boardRepository.findById(editBoardRequestDTO.id());
 
 		Board board = target.orElseThrow(() -> new BoardPermissionException("존재하지 않은 게시글 입니다."));
-		checkUserPermission(user, board);
+		checkUserPermission(user, board.getUser().getId());
 
 		// 동행 일정 수정
 		String newTitle = getCompanionTitle(editBoardRequestDTO.city(),editBoardRequestDTO.title());
@@ -71,7 +75,7 @@ public class BoardService {
 
 		Board board = target.orElseThrow(
 			() -> new BoardPermissionException("존재하지 않은 게시글 입니다."));
-		checkUserPermission(user, board);
+		checkUserPermission(user, board.getUser().getId());
 
 		// 게시글 삭제
 		boardRepository.delete(board);
@@ -82,6 +86,29 @@ public class BoardService {
 			scheduleService.deleteSchedule(null, targetSchedule.getId());
 
 		log.info("success to delete board");
+	}
+
+	public String updateBookmarkedBoard(User user, Long boardId){
+		Board targetBoard = boardRepository.findById(boardId).orElseThrow(
+			() -> new BoardPermissionException("유효하지 않은 게시글 입니다.")
+		);
+
+		Optional<BookmarkedBoard> bookmarkedBoard = bookmarkedBoardRepository.findByUserAndBoard(user, targetBoard);
+		// 북마크가 안되어 있던 경우 -> 북마크
+		if(bookmarkedBoard.isEmpty()) {
+			BookmarkedBoard newBookmarkBoard = new BookmarkedBoard(user, targetBoard, LocalDateTime.now());
+			bookmarkedBoardRepository.save(newBookmarkBoard);
+
+			return "북마크 완료";
+		}
+		// 북마크 되어 있던 경우 -> 취소
+		else {
+			BookmarkedBoard bookmarked = bookmarkedBoard.get();
+			checkUserPermission(user, bookmarked.getUser().getId());
+			bookmarkedBoardRepository.delete(bookmarked);
+
+			return "북마크 취소 완료";
+		}
 	}
 
 	private Schedule createCompanionSchedule (CreateBoardRequestDTO createBoardRequestDTO) {
@@ -100,8 +127,8 @@ public class BoardService {
 		return "[".concat(city.toString()).concat("] ").concat(boardTitle);
 	}
 
-	private static void checkUserPermission(User user, Board board) {
-		if (!board.getUser().getId().equals(user.getId()))
+	private static void checkUserPermission(User user, Long userId) {
+		if (!userId.equals(user.getId()))
 			throw new UserPermissionException();
 	}
 }

@@ -74,4 +74,15 @@ public class BoardController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	@PostMapping("/bookmark")
+	@Operation(summary = "게시글 북마크 업데이트 요청")
+	public ResponseEntity<BaseResponse<Object>> updateBookmarkedBoard(@AuthUser SecurityUser user, @RequestParam Long boardId){
+		String responseMessage = boardService.updateBookmarkedBoard(user.getUser(), boardId);
+
+		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
+			BoardResultMessage.UPDATE_BOOKMARK_BOARD_SUCCESS.getMessage(), responseMessage);
+
+		return ResponseEntity.ok().body(response);
+	}
+
 }
