@@ -73,6 +73,21 @@ public class BoardService {
 		return result;
 	}
 
+	// public List<GetBoardResponseDTO> getBoards(User user){
+	// 	List<Board> all = boardRepository.findAll(user.getId());
+	// 	List<GetBoardResponseDTO> response = new ArrayList<>();
+	//
+	// 	for(Board board : all){
+	// 		bookmarkedBoardRepository.findByUserAndBoard(user,board)
+	// 			.ifPresentOrElse(
+	// 				b -> response.add(GetBoardResponseDTO.toDTO(board,true)),
+	// 				() -> response.add(GetBoardResponseDTO.toDTO(board, false))
+	// 			);
+	// 	}
+	//
+	// 	return response;
+	// }
+
 	public void deleteBoard(User user, Long boardId){
 		Optional<Board> target = boardRepository.findById(boardId);
 
@@ -101,6 +116,7 @@ public class BoardService {
 		if(bookmarkedBoard.isEmpty()) {
 			BookmarkedBoard newBookmarkBoard = new BookmarkedBoard(user, targetBoard, LocalDateTime.now());
 			bookmarkedBoardRepository.save(newBookmarkBoard);
+			targetBoard.updateBookmarkedCount(1L);
 
 			return "북마크 완료";
 		}
@@ -109,6 +125,7 @@ public class BoardService {
 			BookmarkedBoard bookmarked = bookmarkedBoard.get();
 			checkUserPermission(user, bookmarked.getUser().getId());
 			bookmarkedBoardRepository.delete(bookmarked);
+			targetBoard.updateBookmarkedCount(-1L);
 
 			return "북마크 취소 완료";
 		}

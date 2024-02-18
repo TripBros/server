@@ -99,4 +99,8 @@ public class Board {
 
 		return this;
 	}
+
+	public void updateBookmarkedCount(Long bookmarkedCount){
+		this.bookmarkedCount += bookmarkedCount;
+	}
 }
