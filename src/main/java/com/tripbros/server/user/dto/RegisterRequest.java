@@ -28,7 +28,7 @@ public record RegisterRequest( @NotBlank(message = "이메일은 필수 항목�
 			.email(email)
 			.password(encryptedPassword)
 			.nickname(nickname)
-			.age(LocalDate.now().getYear() - age + 1) //한국식 세는나이 적용
+			.age(LocalDate.now().getYear() - age.intValue() + 1) //한국식 세는나이 적용
 			.sex(sex)
 			.travelStyle(travelStyle)
 			.profileImage(profileImageUrl)
