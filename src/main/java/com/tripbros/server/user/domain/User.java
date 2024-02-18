@@ -29,7 +29,7 @@ public class User {
 	private String email;
 	private String password; //BCryptEncoder 사용
 	private String nickname;
-	private Long age;
+	private Integer age;
 
 	private String profileImage;
 
@@ -44,7 +44,7 @@ public class User {
 	private Role role;
 
 	@Builder
-	public User(String email, String password, String nickname, Long age, String profileImage, Sex sex, TravelStyle travelStyle, Role role) {
+	public User(String email, String password, String nickname, Integer age, String profileImage, Sex sex, TravelStyle travelStyle, Role role) {
 		this.email = email;
 		this.password = password;
 		this.nickname = nickname;
