@@ -57,6 +57,9 @@ public class BoardService {
 			newTitle,
 			editBoardRequestDTO.country(),
 			editBoardRequestDTO.city(),
+			editBoardRequestDTO.placeId(),
+			editBoardRequestDTO.placeName(),
+			editBoardRequestDTO.placeUrl(),
 			editBoardRequestDTO.startDate(),
 			editBoardRequestDTO.endDate(),
 			null);
@@ -116,6 +119,9 @@ public class BoardService {
 		CreateScheduleRequestDTO createScheduleRequest = new CreateScheduleRequestDTO(scheduleTitle,
 			createBoardRequestDTO.country(),
 			createBoardRequestDTO.city(),
+			createBoardRequestDTO.placeId(),
+			createBoardRequestDTO.placeName(),
+			createBoardRequestDTO.placeUrl(),
 			createBoardRequestDTO.startDate(),
 			createBoardRequestDTO.endDate(),
 			null);

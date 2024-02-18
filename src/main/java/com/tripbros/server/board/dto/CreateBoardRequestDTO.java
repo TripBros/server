@@ -27,9 +27,9 @@ public record CreateBoardRequestDTO(@NotBlank(message = "게시글 제목은 필
 									@NotNull(message = "동행 선호 나이대는 필수 선택입니다.") List<Age> preferAgeRange,
 									@NotNull(message = "동행 선호 성별은 필수 선택입니다.") Sex preferSex,
 									LocalDateTime createAt,
-									Long locateId,
-									String locateName,
-									String locateUrl) {
+									Long placeId,
+									String placeName,
+									String placeUrl) {
 
 	public Board toEntity(User user, Schedule schedule){
 		return Board.builder()
@@ -44,10 +44,7 @@ public record CreateBoardRequestDTO(@NotBlank(message = "게시글 제목은 필
 			.createdAt(createAt)
 			.deadlineReachedFlag(false)
 			.hit(0L)
-			.bookmarked(0L)
-			.locateId(locateId)
-			.locateName(locateName)
-			.locateUrl(locateUrl)
+			.bookmarkedCount(0L)
 			.nowHeadCount(1)
 			.build();
 	}

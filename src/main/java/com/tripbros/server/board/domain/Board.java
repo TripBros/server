@@ -53,7 +53,7 @@ public class Board {
 	private Integer nowHeadCount;
 
 	private Boolean deadlineReachedFlag;
-	private Long bookmarked;
+	private Long bookmarkedCount;
 
 	@Enumerated(EnumType.STRING)
 	private Sex preferSex;
@@ -65,30 +65,27 @@ public class Board {
 	private LocalDateTime createdAt;
 	private Long hit;
 
-	private Long locateId;
-	private String locateName;
-	private String locateUrl;
+	private Integer chatCount;
 
 	@Builder
 	public Board(User user, Schedule schedule, String content, Purpose purpose, String title, Integer requiredHeadCount,
-		Boolean deadlineReachedFlag, Long bookmarked, Sex preferSex, List<Age> preferAgeRange, LocalDateTime createdAt,
-		Long hit, Long locateId, String locateName, String locateUrl, Integer nowHeadCount) {
+		Integer nowHeadCount, Boolean deadlineReachedFlag, Long bookmarkedCount, Sex preferSex,
+		List<Age> preferAgeRange,
+		LocalDateTime createdAt, Long hit, Integer chatCount) {
 		this.user = user;
 		this.schedule = schedule;
 		this.content = content;
 		this.purpose = purpose;
 		this.title = title;
 		this.requiredHeadCount = requiredHeadCount;
+		this.nowHeadCount = nowHeadCount;
 		this.deadlineReachedFlag = deadlineReachedFlag;
-		this.bookmarked = bookmarked;
+		this.bookmarkedCount = bookmarkedCount;
 		this.preferSex = preferSex;
 		this.preferAgeRange = preferAgeRange;
 		this.createdAt = createdAt;
 		this.hit = hit;
-		this.locateId = locateId;
-		this.locateName = locateName;
-		this.locateUrl = locateUrl;
-		this.nowHeadCount = nowHeadCount;
+		this.chatCount = chatCount;
 	}
 
 	public Board editBoard(EditBoardRequestDTO editBoardRequestDTO, Schedule schedule){
