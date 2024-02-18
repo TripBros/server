@@ -33,6 +33,10 @@ public class Schedule {
 	@JoinColumn(name = "locate_id")
 	private Locate locate;
 
+	private String placeName;
+	private Long placeId;
+	private String placeUrl;
+
 	private String title;
 	private LocalDate startDate;
 	private LocalDate endDate;
@@ -47,14 +51,18 @@ public class Schedule {
 	private String memo;
 
 	@Builder
-	public Schedule(User user, Locate locate, String title, LocalDate startDate, LocalDate endDate, boolean hostFlag,
-		String memo) {
+	public Schedule(User user, Locate locate, String placeName, Long placeId, String placeUrl, String title,
+		LocalDate startDate, LocalDate endDate, boolean hostFlag, Schedule host, String memo) {
 		this.user = user;
 		this.locate = locate;
+		this.placeName = placeName;
+		this.placeId = placeId;
+		this.placeUrl = placeUrl;
 		this.title = title;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.hostFlag = hostFlag;
+		this.host = host;
 		this.memo = memo;
 	}
 
@@ -64,6 +72,9 @@ public class Schedule {
 		this.startDate = requestDTO.startDate();
 		this.endDate = requestDTO.endDate();
 		this.memo = requestDTO.memo();
+		this.placeId = requestDTO.placeId();
+		this.placeName = requestDTO.placeName();
+		this.placeUrl = requestDTO.placeUrl();
 		return this;
 	}
 
