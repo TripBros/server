@@ -51,6 +51,7 @@ public record CreateBoardRequestDTO(@NotBlank(message = "게시글 제목은 필
 			.hit(0L)
 			.bookmarkedCount(0L)
 			.nowHeadCount(1)
+			.chatCount(0)
 			.build();
 	}
 }

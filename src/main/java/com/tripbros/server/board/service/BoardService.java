@@ -12,6 +12,7 @@ import com.tripbros.server.board.domain.PreferAgeRange;
 import com.tripbros.server.board.dto.CreateBoardRequestDTO;
 import com.tripbros.server.board.dto.EditBoardRequestDTO;
 import com.tripbros.server.board.dto.GetBoardResponseDTO;
+import com.tripbros.server.board.dto.GetBookmarkedBoardResponseDTO;
 import com.tripbros.server.board.exception.BoardPermissionException;
 import com.tripbros.server.board.repository.BoardRepository;
 import com.tripbros.server.board.repository.BookmarkedBoardRepository;
@@ -128,6 +129,12 @@ public class BoardService {
 
 			return "북마크 취소 완료";
 		}
+	}
+
+	public List<GetBookmarkedBoardResponseDTO> getBookmarkedBoards(User user){
+		List<GetBookmarkedBoardResponseDTO> result = bookmarkedBoardRepository.findByUser(user.getId());
+		log.info("success to get bookmarked boards");
+		return result;
 	}
 
 	private Schedule createCompanionSchedule (CreateBoardRequestDTO createBoardRequestDTO) {

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tripbros.server.board.dto.CreateBoardRequestDTO;
 import com.tripbros.server.board.dto.EditBoardRequestDTO;
 import com.tripbros.server.board.dto.GetBoardResponseDTO;
+import com.tripbros.server.board.dto.GetBookmarkedBoardResponseDTO;
 import com.tripbros.server.board.enumerate.BoardResultMessage;
 import com.tripbros.server.board.exception.BoardRequestException;
 import com.tripbros.server.board.service.BoardService;
@@ -94,6 +95,17 @@ public class BoardController {
 
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
 			BoardResultMessage.UPDATE_BOOKMARK_BOARD_SUCCESS.getMessage(), responseMessage);
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/bookmark")
+	@Operation(summary = "북마크 한 게시글 조회")
+	public ResponseEntity<BaseResponse<List<GetBookmarkedBoardResponseDTO>>> getBookmarkedBoard(@AuthUser SecurityUser user){
+		List<GetBookmarkedBoardResponseDTO> result = boardService.getBookmarkedBoards(user.getUser());
+
+		BaseResponse<List<GetBookmarkedBoardResponseDTO>> response = new BaseResponse<>(true, HttpStatus.OK,
+			BoardResultMessage.GET_BOOKMARKED_BOARD_SUCCESS.getMessage(), result);
 
 		return ResponseEntity.ok().body(response);
 	}
