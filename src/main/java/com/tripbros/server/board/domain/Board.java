@@ -1,21 +1,18 @@
 package com.tripbros.server.board.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.tripbros.server.board.dto.EditBoardRequestDTO;
 import com.tripbros.server.schedule.domain.Schedule;
 import com.tripbros.server.user.domain.User;
-import com.tripbros.server.enumerate.Age;
 import com.tripbros.server.enumerate.Purpose;
 import com.tripbros.server.enumerate.Sex;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -58,9 +55,9 @@ public class Board {
 	@Enumerated(EnumType.STRING)
 	private Sex preferSex;
 
-	@ElementCollection
-	@Enumerated(EnumType.STRING)
-	private List<Age> preferAgeRange = new ArrayList<>();
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "prefer_age_range_id")
+	private PreferAgeRange preferAgeRange;
 
 	private LocalDateTime createdAt;
 	private Long hit;
@@ -70,8 +67,7 @@ public class Board {
 	@Builder
 	public Board(User user, Schedule schedule, String content, Purpose purpose, String title, Integer requiredHeadCount,
 		Integer nowHeadCount, Boolean deadlineReachedFlag, Long bookmarkedCount, Sex preferSex,
-		List<Age> preferAgeRange,
-		LocalDateTime createdAt, Long hit, Integer chatCount) {
+		PreferAgeRange preferAgeRange, LocalDateTime createdAt, Long hit, Integer chatCount) {
 		this.user = user;
 		this.schedule = schedule;
 		this.content = content;
@@ -88,14 +84,15 @@ public class Board {
 		this.chatCount = chatCount;
 	}
 
+
 	public Board editBoard(EditBoardRequestDTO editBoardRequestDTO, Schedule schedule){
 		this.title = editBoardRequestDTO.title();
 		this.content = editBoardRequestDTO.content();
 		this.schedule = schedule;
 		this.purpose = editBoardRequestDTO.purpose();
-		this.preferAgeRange = editBoardRequestDTO.preferAgeRange();
 		this.requiredHeadCount = editBoardRequestDTO.requiredHeadCount();
 		this.preferSex = editBoardRequestDTO.preferSex();
+		this.preferAgeRange.editPreferAgeRange(editBoardRequestDTO);
 
 		return this;
 	}
