@@ -1,17 +1,21 @@
 package com.tripbros.server.board.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.tripbros.server.board.domain.Board;
 import com.tripbros.server.board.domain.BookmarkedBoard;
+import com.tripbros.server.board.domain.PreferAgeRange;
 import com.tripbros.server.board.dto.CreateBoardRequestDTO;
 import com.tripbros.server.board.dto.EditBoardRequestDTO;
+import com.tripbros.server.board.dto.GetBoardResponseDTO;
 import com.tripbros.server.board.exception.BoardPermissionException;
 import com.tripbros.server.board.repository.BoardRepository;
 import com.tripbros.server.board.repository.BookmarkedBoardRepository;
+import com.tripbros.server.board.repository.PreferAgeRangeRepository;
 import com.tripbros.server.common.exception.UserPermissionException;
 import com.tripbros.server.enumerate.City;
 import com.tripbros.server.schedule.domain.Schedule;
@@ -32,13 +36,16 @@ public class BoardService {
 
 	private final BoardRepository boardRepository;
 	private final BookmarkedBoardRepository bookmarkedBoardRepository;
+	private final PreferAgeRangeRepository preferAgeRangeRepository;
 
 	private final ScheduleService scheduleService;
 
 	public Board createBoard(User user, CreateBoardRequestDTO createBoardRequestDTO){
 		Schedule schedule = createCompanionSchedule(createBoardRequestDTO);
 
-		Board board = createBoardRequestDTO.toEntity(user, schedule);
+		PreferAgeRange preferAgeRange = getPreferAgeRange(createBoardRequestDTO);
+
+		Board board = createBoardRequestDTO.toEntity(user, schedule, preferAgeRange);
 		boardRepository.save(board);
 
 		log.info("success to create board");
@@ -73,20 +80,12 @@ public class BoardService {
 		return result;
 	}
 
-	// public List<GetBoardResponseDTO> getBoards(User user){
-	// 	List<Board> all = boardRepository.findAll(user.getId());
-	// 	List<GetBoardResponseDTO> response = new ArrayList<>();
-	//
-	// 	for(Board board : all){
-	// 		bookmarkedBoardRepository.findByUserAndBoard(user,board)
-	// 			.ifPresentOrElse(
-	// 				b -> response.add(GetBoardResponseDTO.toDTO(board,true)),
-	// 				() -> response.add(GetBoardResponseDTO.toDTO(board, false))
-	// 			);
-	// 	}
-	//
-	// 	return response;
-	// }
+	public List<GetBoardResponseDTO> getBoards(User user){
+		List<GetBoardResponseDTO> response = boardRepository.findAllGetDTO(user.getId());
+
+		log.info("success to get boards");
+		return response;
+	}
 
 	public void deleteBoard(User user, Long boardId){
 		Optional<Board> target = boardRepository.findById(boardId);
@@ -148,6 +147,18 @@ public class BoardService {
 
 	private static String getCompanionTitle(City city, String boardTitle) {
 		return "[".concat(city.toString()).concat("] ").concat(boardTitle);
+	}
+
+	private PreferAgeRange getPreferAgeRange(CreateBoardRequestDTO createBoardRequestDTO) {
+		PreferAgeRange preferAgeRange = new PreferAgeRange(
+			createBoardRequestDTO.twentiesFlag(),
+			createBoardRequestDTO.thirtiesFlag(),
+			createBoardRequestDTO.fortiesFlag(),
+			createBoardRequestDTO.fiftiesFlag(),
+			createBoardRequestDTO.sixtiesAboveFlag(),
+			createBoardRequestDTO.unrelatedFlag());
+		preferAgeRangeRepository.save(preferAgeRange);
+		return preferAgeRange;
 	}
 
 	private static void checkUserPermission(User user, Long userId) {

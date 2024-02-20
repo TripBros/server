@@ -1,9 +1,12 @@
 package com.tripbros.server.board.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbros.server.board.dto.CreateBoardRequestDTO;
 import com.tripbros.server.board.dto.EditBoardRequestDTO;
+import com.tripbros.server.board.dto.GetBoardResponseDTO;
 import com.tripbros.server.board.enumerate.BoardResultMessage;
 import com.tripbros.server.board.exception.BoardRequestException;
 import com.tripbros.server.board.service.BoardService;
@@ -60,11 +64,20 @@ public class BoardController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	@GetMapping
+	@Operation(summary = "게시글 전체 조회")
+	public ResponseEntity<BaseResponse<List<GetBoardResponseDTO>>> getBoards(@AuthUser SecurityUser user){
+		List<GetBoardResponseDTO> result = boardService.getBoards(user.getUser());
+
+		BaseResponse<List<GetBoardResponseDTO>> response = new BaseResponse<>(true, HttpStatus.OK,
+			BoardResultMessage.GET_BOARD_SUCCESS.getMessage(), result);
+
+		return ResponseEntity.ok().body(response);
+	}
+
 	@DeleteMapping
 	@Operation(summary = "게시글 삭제")
-	public ResponseEntity<BaseResponse<Object>> deleteBoard(@AuthUser SecurityUser user, @RequestParam Long boardId, Errors errors){
-		if(errors.hasErrors())
-			throw new BoardRequestException(errors);
+	public ResponseEntity<BaseResponse<Object>> deleteBoard(@AuthUser SecurityUser user, @RequestParam Long boardId){
 
 		boardService.deleteBoard(user.getUser(), boardId);
 
@@ -84,5 +97,4 @@ public class BoardController {
 
 		return ResponseEntity.ok().body(response);
 	}
-
 }
