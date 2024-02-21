@@ -88,6 +88,15 @@ public class BoardService {
 		return response;
 	}
 
+	public void updateBoardHit(Long boardId){
+		Optional<Board> target = boardRepository.findById(boardId);
+		Board board = target.orElseThrow(
+			() -> new BoardPermissionException("존재하지 않은 게시글 입니다.")
+		);
+		board.updateBoardHit();
+		log.info("success to update board hit");
+	}
+
 	public void deleteBoard(User user, Long boardId){
 		Optional<Board> target = boardRepository.findById(boardId);
 

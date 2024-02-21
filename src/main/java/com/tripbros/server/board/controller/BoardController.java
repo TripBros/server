@@ -76,6 +76,17 @@ public class BoardController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	@PostMapping("/hit")
+	@Operation(summary = "게시글 상세 조회")
+	public ResponseEntity<BaseResponse<Object>> updateBoardHit(@AuthUser SecurityUser user, @RequestParam Long boardId){
+		boardService.updateBoardHit(boardId);
+
+		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
+			BoardResultMessage.GET_BOARD_DETAIL_SUCCESS.getMessage(), null);
+
+		return ResponseEntity.ok().body(response);
+	}
+
 	@DeleteMapping
 	@Operation(summary = "게시글 삭제")
 	public ResponseEntity<BaseResponse<Object>> deleteBoard(@AuthUser SecurityUser user, @RequestParam Long boardId){

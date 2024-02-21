@@ -100,4 +100,5 @@ public class Board {
 	public void updateBookmarkedCount(Long bookmarkedCount){
 		this.bookmarkedCount += bookmarkedCount;
 	}
+	public void updateBoardHit(){ this.hit += 1; }
 }
