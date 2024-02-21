@@ -87,6 +87,17 @@ public class BoardController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	@PostMapping("/deadline-reached")
+	@Operation(summary = "게시글 수동 마감 처리")
+	public ResponseEntity<BaseResponse<Object>> updateDeadlineReached(@AuthUser SecurityUser user, @RequestParam Long boardId){
+		boardService.updateDeadlineReached(user.getUser(), boardId);
+
+		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
+			BoardResultMessage.UPDATE_DEADLINE_REACH.getMessage(), null);
+
+		return ResponseEntity.ok().body(response);
+	}
+
 	@DeleteMapping
 	@Operation(summary = "게시글 삭제")
 	public ResponseEntity<BaseResponse<Object>> deleteBoard(@AuthUser SecurityUser user, @RequestParam Long boardId){
