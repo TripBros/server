@@ -3,6 +3,7 @@ package com.tripbros.server.chatting.domain;
 import com.tripbros.server.user.domain.User;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
@@ -18,12 +19,12 @@ import lombok.NoArgsConstructor;
 public class ChatroomParticipant {
 
 	@Id
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
 
 	@Id
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "chatroom_id")
 	private Chatroom chatroom;
 

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -106,6 +107,10 @@ public class TokenProvider {
 			.setExpiration(validity)
 			.compact();
 		return JwtDTO.builder().grantType("Bearer").accessToken(accessToken).build();
+	}
+
+	public String extractJwt(final StompHeaderAccessor accessor) {
+		return accessor.getFirstNativeHeader("Authorization");
 	}
 
 
