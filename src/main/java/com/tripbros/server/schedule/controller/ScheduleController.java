@@ -76,10 +76,7 @@ public class ScheduleController {
 
 	@DeleteMapping
 	@Operation(summary = "일정 삭제")
-	public ResponseEntity<BaseResponse<Object>> deleteSchedule(@AuthUser SecurityUser user, @RequestParam Long scheduleId, Errors errors){
-		if (errors.hasErrors())
-			throw new ScheduleRequestException(errors);
-
+	public ResponseEntity<BaseResponse<Object>> deleteSchedule(@AuthUser SecurityUser user, @RequestParam Long scheduleId){
 		scheduleService.deleteSchedule(user.getUser(), scheduleId);
 
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
