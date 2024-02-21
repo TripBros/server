@@ -2,5 +2,8 @@ package com.tripbros.server.enumerate;
 
 public enum Purpose {
 	ACCOMMODATION_SHARING,
-	MEAL
+	MEAL,
+	MOVE,
+	TRAVEL,
+	OTHER
 }

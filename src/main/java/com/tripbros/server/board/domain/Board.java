@@ -1,15 +1,18 @@
 package com.tripbros.server.board.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
+import com.tripbros.server.board.dto.EditBoardRequestDTO;
 import com.tripbros.server.schedule.domain.Schedule;
 import com.tripbros.server.user.domain.User;
-import com.tripbros.server.enumerate.Age;
 import com.tripbros.server.enumerate.Purpose;
 import com.tripbros.server.enumerate.Sex;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,30 +42,65 @@ public class Board {
 	@Column(columnDefinition = "TEXT")
 	private String content;
 
-	private String title;
-	private Long requiredHeadCount;
+	@Enumerated(EnumType.STRING)
 	private Purpose purpose;
-	private boolean deadlineReachedFlag;
-	private Long bookmarked;
+
+	private String title;
+	private Integer requiredHeadCount;
+	private Integer nowHeadCount;
+
+	private Boolean deadlineReachedFlag;
+	private Long bookmarkedCount;
+
+	@Enumerated(EnumType.STRING)
 	private Sex preferSex;
-	private Age preferAge; // Age enum 미정
-	private Date createdAt;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "prefer_age_range_id")
+	private PreferAgeRange preferAgeRange;
+
+	private LocalDateTime createdAt;
 	private Long hit;
 
+	private Integer chatCount;
+
 	@Builder
-	public Board(User user, Schedule schedule, String content, String title, Long requiredHeadCount, Purpose purpose,
-		boolean deadlineReachedFlag, Long bookmarked, Sex preferSex, Age preferAge, Date createdAt, Long hit) {
+	public Board(User user, Schedule schedule, String content, Purpose purpose, String title, Integer requiredHeadCount,
+		Integer nowHeadCount, Boolean deadlineReachedFlag, Long bookmarkedCount, Sex preferSex,
+		PreferAgeRange preferAgeRange, LocalDateTime createdAt, Long hit, Integer chatCount) {
 		this.user = user;
 		this.schedule = schedule;
 		this.content = content;
+		this.purpose = purpose;
 		this.title = title;
 		this.requiredHeadCount = requiredHeadCount;
-		this.purpose = purpose;
+		this.nowHeadCount = nowHeadCount;
 		this.deadlineReachedFlag = deadlineReachedFlag;
-		this.bookmarked = bookmarked;
+		this.bookmarkedCount = bookmarkedCount;
 		this.preferSex = preferSex;
-		this.preferAge = preferAge;
+		this.preferAgeRange = preferAgeRange;
 		this.createdAt = createdAt;
 		this.hit = hit;
+		this.chatCount = chatCount;
 	}
+
+
+	public Board editBoard(EditBoardRequestDTO editBoardRequestDTO, Schedule schedule){
+		this.title = editBoardRequestDTO.title();
+		this.content = editBoardRequestDTO.content();
+		this.schedule = schedule;
+		this.purpose = editBoardRequestDTO.purpose();
+		this.requiredHeadCount = editBoardRequestDTO.requiredHeadCount();
+		this.preferSex = editBoardRequestDTO.preferSex();
+		this.preferAgeRange.editPreferAgeRange(editBoardRequestDTO);
+
+		return this;
+	}
+
+	public void updateBookmarkedCount(Long bookmarkedCount){
+		this.bookmarkedCount += bookmarkedCount;
+	}
+	public void updateBoardHit(){ this.hit += 1; }
+
+	public void updateDeadlineReached(){ this.deadlineReachedFlag = true; }
 }
