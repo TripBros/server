@@ -2,10 +2,13 @@ package com.tripbros.server.chatting.controller;
 
 import java.time.LocalDateTime;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbros.server.chatting.dto.MessageRequest;
 import com.tripbros.server.chatting.dto.MessageResponse;
@@ -13,7 +16,7 @@ import com.tripbros.server.chatting.dto.MessageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @Slf4j
 public class ChatController {
@@ -25,8 +28,18 @@ public class ChatController {
 		log.info("# roomId = {}", roomId);
 		log.info("# message = {}", request);
 
-		MessageResponse response = MessageResponse.builder().content(request.message()).time(LocalDateTime.now()).build();
-
+		MessageResponse response = MessageResponse.builder().build();
 		template.convertAndSend("/sub/room/" + roomId, response);
+	}
+
+	@PostMapping("/room/{roomId}/enter")
+	public HttpStatus enterRoom(@PathVariable Long roomId) {
+
+		MessageResponse response = MessageResponse.builder().isSystemMessage(true)
+			.content("시스템!")
+			.sentAt(LocalDateTime.now())
+			.build();
+		template.convertAndSend("/sub/room/" + roomId, response);
+		return HttpStatus.OK;
 	}
 }

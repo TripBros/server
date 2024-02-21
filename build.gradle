@@ -53,6 +53,11 @@ dependencies {
 	implementation 'com.azure.spring:spring-cloud-azure-dependencies:5.9.0'
 	implementation 'com.azure.spring:spring-cloud-azure-starter-storage-blob:5.8.0'
 
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
 }
 
 tasks.named('test') {

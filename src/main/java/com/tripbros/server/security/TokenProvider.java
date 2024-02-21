@@ -1,5 +1,7 @@
 package com.tripbros.server.security;
 
+import static com.tripbros.server.security.JwtFilter.*;
+
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -109,8 +112,13 @@ public class TokenProvider {
 		return JwtDTO.builder().grantType("Bearer").accessToken(accessToken).build();
 	}
 
-	public String extractJwt(final StompHeaderAccessor accessor) {
-		return accessor.getFirstNativeHeader("Authorization");
+	public String extractJwtFromStomp(final StompHeaderAccessor accessor) {
+
+		String bearer = accessor.getFirstNativeHeader(AUTHORIZATION_HEADER);
+		if (StringUtils.hasText(bearer) && bearer.startsWith(BEARER_PREFIX)) {
+			return bearer.substring(7);
+		}
+		return null;
 	}
 
 

@@ -6,7 +6,10 @@ import lombok.Builder;
 
 @Builder
 public record MessageResponse(
+	String userName,
+	String profileImage,
 	String content,
-	LocalDateTime time
+	LocalDateTime sentAt,
+	Boolean isSystemMessage
 ) {
 }

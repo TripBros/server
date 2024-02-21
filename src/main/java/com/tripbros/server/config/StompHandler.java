@@ -25,10 +25,13 @@ public class StompHandler implements ChannelInterceptor {
 		final StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
 		if (StompCommand.CONNECT == accessor.getCommand()) {
-			String jwt =  tokenProvider.extractJwt(accessor);
-			if(!tokenProvider.validateToken(jwt))
+			String jwt =  tokenProvider.extractJwtFromStomp(accessor);
+			if (jwt == null || !tokenProvider.validateToken(jwt)) {
 				throw new UnauthorizedAccessException("인증 실패");
+			}
 		}
 		return message;
 	}
+
+
 }
