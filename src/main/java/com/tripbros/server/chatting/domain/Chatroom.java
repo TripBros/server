@@ -38,10 +38,13 @@ public class Chatroom {
 
 	@Builder
 
-	public Chatroom(Board board, boolean status, LocalDateTime createAt, String title) {
+	public Chatroom(Board board, boolean status, LocalDateTime createAt, String title, String lastMessage,
+		Boolean isGroupChat) {
 		this.board = board;
 		this.status = status;
 		this.createAt = createAt;
 		this.title = title;
+		this.lastMessage = lastMessage;
+		this.isGroupChat = isGroupChat;
 	}
 }

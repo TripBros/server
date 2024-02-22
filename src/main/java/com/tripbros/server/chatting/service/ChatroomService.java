@@ -30,24 +30,27 @@ public class ChatroomService {
 	private final BoardRepository boardRepository;
 	private final MessageRepository messageRepository;
 
-	public Chatroom createSingleChatroom(User user, Long boardId) {
+	public Chatroom getOneToOneChatroom(User user, Long boardId) {
 		Board board = boardRepository.findById(boardId).orElseThrow(() -> new NoSuchElementException()); //TODO : 변경
-		Chatroom chatroom = Chatroom.builder()
-			.board(board)
-			.createAt(LocalDateTime.now())
-			.status(true)
-			.title(board.getTitle())
-			.build();
+		return participantRepository.findSingleRoomByBoardAndUser(board, user).orElseGet(() -> {
+			Chatroom chatroom = Chatroom.builder()
+				.board(board)
+				.createAt(LocalDateTime.now())
+				.status(true)
+				.isGroupChat(false)
+				.title(board.getTitle())
+				.build();
 
-		chatroomRepository.save(chatroom);
-		ChatroomParticipant participant = ChatroomParticipant.builder().chatroom(chatroom).user(user).build();
-		ChatroomParticipant owner = ChatroomParticipant.builder()
-			.chatroom(chatroom)
-			.user(board.getUser())
-			.build();
-		participantRepository.save(participant);
-		participantRepository.save(owner);
-		return chatroom;
+			chatroomRepository.save(chatroom);
+			ChatroomParticipant participant = ChatroomParticipant.builder().chatroom(chatroom).user(user).build();
+			ChatroomParticipant owner = ChatroomParticipant.builder()
+				.chatroom(chatroom)
+				.user(board.getUser())
+				.build();
+			participantRepository.save(participant);
+			participantRepository.save(owner);
+			return chatroom;
+		});
 	}
 
 	public Message saveMessage(User user, Long chatroomId, MessageRequest request) {
@@ -59,4 +62,5 @@ public class ChatroomService {
 			.build();
 		return messageRepository.save(message);
 	}
+
 }

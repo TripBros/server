@@ -28,7 +28,13 @@ public class ChatController {
 		log.info("# roomId = {}", roomId);
 		log.info("# message = {}", request);
 
-		MessageResponse response = MessageResponse.builder().build();
+		MessageResponse response = MessageResponse.builder()
+			.sentAt(LocalDateTime.now())
+			.content(request.message())
+			.isSystemMessage(false)
+			.profileImage("https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/800px-Google_Chrome_icon_%28February_2022%29.svg.png")
+			.userName("mockedUserName")
+			.build();
 		template.convertAndSend("/sub/room/" + roomId, response);
 	}
 
@@ -36,7 +42,7 @@ public class ChatController {
 	public HttpStatus enterRoom(@PathVariable Long roomId) {
 
 		MessageResponse response = MessageResponse.builder().isSystemMessage(true)
-			.content("시스템!")
+			.content("시스템 메세지")
 			.sentAt(LocalDateTime.now())
 			.build();
 		template.convertAndSend("/sub/room/" + roomId, response);
