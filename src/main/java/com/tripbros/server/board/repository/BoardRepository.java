@@ -1,5 +1,6 @@
 package com.tripbros.server.board.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 		+ "LEFT OUTER JOIN FETCH BookmarkedBoard bookmark "
 		+ "ON (bookmark.board.id = b.id AND bookmark.user.id = :userId) ")
 	List<GetBoardResponseDTO> findAllGetDTO(@Param("userId") Long userId);
+
+	List<Board> findByScheduleStartDateBefore(LocalDate curDate);
 }

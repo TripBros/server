@@ -1,9 +1,11 @@
 package com.tripbros.server.board.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.tripbros.server.board.domain.Board;
@@ -156,6 +158,18 @@ public class BoardService {
 		List<GetBookmarkedBoardResponseDTO> result = bookmarkedBoardRepository.findByUser(user.getId());
 		log.info("success to get bookmarked boards");
 		return result;
+	}
+
+	@Scheduled(cron = "0 0 0 * * ?")
+	public void checkDeadlineReached(){
+		LocalDate curDate = LocalDate.now();
+		List<Board> boards = boardRepository.findByScheduleStartDateBefore(curDate);
+
+		if(!boards.isEmpty()){
+			for(Board board : boards){
+				board.updateDeadlineReached();
+			}
+		}
 	}
 
 	private Schedule createCompanionSchedule (CreateBoardRequestDTO createBoardRequestDTO) {
