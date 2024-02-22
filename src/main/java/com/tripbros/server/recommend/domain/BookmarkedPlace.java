@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class BookmarkedRecommendedPlace{
+public class BookmarkedPlace {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -38,7 +38,7 @@ public class BookmarkedRecommendedPlace{
 	private LocalDateTime bookmarkedAt;
 
 	@Builder
-	public BookmarkedRecommendedPlace(User user, Locate locate, Long placeId, String placeName, String placeUrl,
+	public BookmarkedPlace(User user, Locate locate, Long placeId, String placeName, String placeUrl,
 		String placeImage, LocalDateTime bookmarkedAt) {
 		this.user = user;
 		this.locate = locate;

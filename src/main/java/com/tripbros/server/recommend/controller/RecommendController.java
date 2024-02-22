@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbros.server.common.dto.BaseResponse;
+import com.tripbros.server.recommend.dto.GetBookmarkedPlaceResponseDTO;
 import com.tripbros.server.recommend.dto.GetRecommendedLocateResponseDTO;
 import com.tripbros.server.recommend.dto.UpdateBookmarkedPlaceRequestDTO;
 import com.tripbros.server.recommend.enumerate.RecommendResultMessage;
@@ -53,6 +54,17 @@ public class RecommendController {
 
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
 			RecommendResultMessage.UPDATE_BOOKMARK_PLACE_SUCCESS.getMessage(), result);
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/bookmark")
+	@Operation(summary = "북마크 한 맛집 전체 조회")
+	public ResponseEntity<BaseResponse<List<GetBookmarkedPlaceResponseDTO>>> getBookmarkedPlace(@AuthUser SecurityUser user){
+		List<GetBookmarkedPlaceResponseDTO> result = recommendService.getBookmarkedPlace(user.getUser());
+
+		BaseResponse<List<GetBookmarkedPlaceResponseDTO>> response = new BaseResponse<>(true ,HttpStatus.OK,
+			RecommendResultMessage.GET_BOOKMARKED_PLACE_SUCCESS.getMessage(), result);
 
 		return ResponseEntity.ok().body(response);
 	}
