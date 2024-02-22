@@ -12,4 +12,6 @@ public record MessageResponse(
 	LocalDateTime sentAt,
 	Boolean isSystemMessage
 ) {
+
+
 }

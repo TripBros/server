@@ -29,7 +29,7 @@ public class Chatroom {
 	private Board board;
 
 	private boolean status;
-	private LocalDateTime createAt;
+	private LocalDateTime updatedAt;
 	private String title;
 
 	private String lastMessage;
@@ -38,13 +38,18 @@ public class Chatroom {
 
 	@Builder
 
-	public Chatroom(Board board, boolean status, LocalDateTime createAt, String title, String lastMessage,
+	public Chatroom(Board board, boolean status, LocalDateTime updatedAt, String title, String lastMessage,
 		Boolean isGroupChat) {
 		this.board = board;
 		this.status = status;
-		this.createAt = createAt;
+		this.updatedAt = updatedAt;
 		this.title = title;
 		this.lastMessage = lastMessage;
 		this.isGroupChat = isGroupChat;
+	}
+
+	public void updateLastMessageWithTime(String lastMessage) {
+		this.lastMessage = lastMessage;
+		this.updatedAt = LocalDateTime.now();
 	}
 }

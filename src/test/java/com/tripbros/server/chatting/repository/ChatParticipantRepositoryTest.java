@@ -137,7 +137,7 @@ class ChatParticipantRepositoryTest {
 		return Chatroom.builder()
 			.title("채팅제목")
 			.status(true)
-			.createAt(LocalDateTime.now())
+			.updatedAt(LocalDateTime.now())
 			.board(board)
 			.isGroupChat(false)
 			.build();

@@ -75,7 +75,7 @@ public class TokenProvider {
 			.build()
 			.parseClaimsJws(token)
 			.getBody()
-			.get("user-email", String.class);
+			.get("sub", String.class);
 	}
 	public boolean validateToken(String token) {
 		try {
