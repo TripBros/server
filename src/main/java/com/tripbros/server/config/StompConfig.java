@@ -7,6 +7,8 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import com.tripbros.server.chatting.exception.StompErrorHandler;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class StompConfig implements WebSocketMessageBrokerConfigurer {
 
 	private final StompHandler handler;
+	private final StompErrorHandler stompErrorHandler;
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -29,6 +32,7 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
 		registry.addEndpoint("/ws-endpoint")
 			.addInterceptors()
 			.setAllowedOriginPatterns("*");
+		registry.setErrorHandler(stompErrorHandler);
 	}
 
 	@Override

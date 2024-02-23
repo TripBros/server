@@ -83,10 +83,13 @@ public class TokenProvider {
 			return true;
 		} catch (SecurityException | MalformedJwtException e){
 			log.info("잘못된 JWT 서명");
+			throw new UnauthorizedAccessException(SecurityExceptionMessage.MalformedJwt.getMessage());
 		} catch (ExpiredJwtException e){
 			log.info("만료된 JWT");
+			throw new UnauthorizedAccessException(SecurityExceptionMessage.ExpiredJwt.getMessage());
 		} catch (UnsupportedJwtException e){
 			log.info("지원하지 않는 JWT");
+			throw new UnauthorizedAccessException(SecurityExceptionMessage.UnsupportedJwt.getMessage());
 		} catch (IllegalArgumentException e){
 			log.info("잘못된 JWT");
 		}
