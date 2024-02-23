@@ -75,6 +75,16 @@ public class BoardController {
 
 		return ResponseEntity.ok().body(response);
 	}
+	@GetMapping("/own")
+	@Operation(summary = "내가 쓴 게시글 전체 조회")
+	public ResponseEntity<BaseResponse<List<GetBoardResponseDTO>>> getMyBoards(@AuthUser SecurityUser user){
+		List<GetBoardResponseDTO> result = boardService.getMyBoards(user.getUser());
+
+		BaseResponse<List<GetBoardResponseDTO>> response = new BaseResponse<>(true, HttpStatus.OK,
+			BoardResultMessage.GET_BOARD_SUCCESS.getMessage(), result);
+
+		return ResponseEntity.ok().body(response);
+	}
 
 	@PostMapping("/hit")
 	@Operation(summary = "게시글 상세 조회")
