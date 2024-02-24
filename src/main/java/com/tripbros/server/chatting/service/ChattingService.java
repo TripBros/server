@@ -13,6 +13,7 @@ import com.tripbros.server.board.repository.BoardRepository;
 import com.tripbros.server.chatting.domain.Chatroom;
 import com.tripbros.server.chatting.domain.ChatroomParticipant;
 import com.tripbros.server.chatting.domain.Message;
+import com.tripbros.server.chatting.dto.ChatroomResponse;
 import com.tripbros.server.chatting.dto.MessageRequest;
 import com.tripbros.server.chatting.dto.MessageResponse;
 import com.tripbros.server.chatting.exception.ChatException;
@@ -87,6 +88,10 @@ public class ChattingService {
 
 	private boolean checkUserPermission(User user, UUID chatroomId) {
 		return participantRepository.existsByUserAndChatroomId(user, chatroomId);
+	}
+
+	public List<ChatroomResponse> getAllChatroom(User user) {
+		return participantRepository.getAllUserChatroomToDto(user);
 	}
 
 }

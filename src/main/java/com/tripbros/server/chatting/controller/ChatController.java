@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tripbros.server.chatting.dto.ChatroomResponse;
 import com.tripbros.server.chatting.dto.MessageRequest;
 import com.tripbros.server.chatting.dto.MessageResponse;
 import com.tripbros.server.chatting.enumerate.ChatResultMessage;
@@ -83,6 +84,13 @@ public class ChatController {
 		List<MessageResponse> messages = chattingService.getAllChattingData(user.getUser(), roomId);
 		return ResponseEntity.ok(
 			new BaseResponse<>(true, HttpStatus.OK, ChatResultMessage.MESSAGES_LOAD_SUCCESS.getMessage(), messages));
+	}
+
+	@GetMapping
+	public ResponseEntity<BaseResponse<List<ChatroomResponse>>> getAllChatroom(@AuthUser SecurityUser user) {
+		List<ChatroomResponse> chatroom = chattingService.getAllChatroom(user.getUser());
+		return ResponseEntity.ok(
+			new BaseResponse<>(true, HttpStatus.OK, ChatResultMessage.MESSAGES_LOAD_SUCCESS.getMessage(), chatroom));
 	}
 
 }
