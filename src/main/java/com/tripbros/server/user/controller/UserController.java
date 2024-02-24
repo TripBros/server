@@ -1,25 +1,29 @@
 package com.tripbros.server.user.controller;
 
-import com.tripbros.server.security.AuthUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tripbros.server.common.dto.BaseResponse;
 import com.tripbros.server.common.exception.ValidationFailException;
+import com.tripbros.server.security.AuthUser;
 import com.tripbros.server.security.JwtDTO;
 import com.tripbros.server.security.SecurityUser;
+import com.tripbros.server.user.dto.EditUserInfoRequest;
 import com.tripbros.server.user.dto.RegisterRequest;
 import com.tripbros.server.user.dto.SignInRequest;
+import com.tripbros.server.user.enumerate.UserResultMessage;
 import com.tripbros.server.user.service.UserRegisterService;
 import com.tripbros.server.user.service.UserService;
 
@@ -38,12 +42,33 @@ public class UserController {
 	private final UserRegisterService registerService;
 	private final UserService userService;
 
-	@PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/register", consumes = {
+		MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "회원 가입")
-	public ResponseEntity<BaseResponse<Object>> register(@Valid @RequestBody RegisterRequest request, Errors errors) {
+	public ResponseEntity<BaseResponse<Object>> register(
+		@Valid @RequestPart RegisterRequest registerRequest,
+		Errors errors,
+		@RequestPart MultipartFile image) {
 		if (errors.hasErrors())
 			throw new ValidationFailException(errors);
-		return registerService.register(request);
+		registerService.register(registerRequest, image);
+		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
+			UserResultMessage.REGISTER_SUCCESS.getMessage(), null);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+	@Operation(summary = "회원 정보 수정")
+	public ResponseEntity<BaseResponse<Object>> editInfo(@Valid @RequestPart EditUserInfoRequest editUserInfoRequest,
+		Errors errors,
+		@RequestPart(required = false) MultipartFile image,
+		@AuthUser SecurityUser user) {
+		if (errors.hasErrors())
+			throw new ValidationFailException(errors);
+		registerService.editInfo(editUserInfoRequest, image, user.getUser());
+		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
+			UserResultMessage.EDIT_USERINFO_SUCCESS.getMessage(), null);
+		return ResponseEntity.ok().body(response);
 	}
 
 	@GetMapping("/email-check")
@@ -64,12 +89,21 @@ public class UserController {
 	@Operation(summary = "로그인")
 	public ResponseEntity<BaseResponse<JwtDTO>> signIn(@RequestBody SignInRequest request) {
 		JwtDTO token = userService.signIn(request);
-		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, token));
+		return ResponseEntity.ok()
+			.body(new BaseResponse<>(true, HttpStatus.OK, UserResultMessage.LOGIN_SUCCESS.getMessage(), token));
+	}
+
+	@DeleteMapping
+	@Operation(summary = "회원 탈퇴")
+	public ResponseEntity<BaseResponse<Object>> resignUser(@AuthUser SecurityUser user, @RequestParam String password){
+		registerService.deleteUser(user.getUser(), password);
+		return ResponseEntity.ok()
+			.body(new BaseResponse<>(true, HttpStatus.OK, UserResultMessage.RESIGN_SUCCESS.getMessage(), null));
 	}
 
 	@GetMapping("/test") // 테스트 온리 컨트롤러
 	@Operation(summary = "백엔드 자체 테스트 전용 API 입니다.")
-	public String test(@AuthUser SecurityUser user) {
-		return user.getUser().getNickname();
+	public String  test(@AuthUser SecurityUser user) {
+		return user.getUser().getProfileImage();
 	}
 }

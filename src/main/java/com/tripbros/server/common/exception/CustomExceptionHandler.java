@@ -3,17 +3,19 @@ package com.tripbros.server.common.exception;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import com.tripbros.server.schedule.exception.SchedulePermissionException;
-import com.tripbros.server.schedule.exception.ScheduleRequestException;
-import com.tripbros.server.security.UnauthorizedAccessException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.tripbros.server.board.exception.BoardPermissionException;
+import com.tripbros.server.board.exception.BoardRequestException;
+import com.tripbros.server.chatting.exception.ChatException;
 import com.tripbros.server.common.dto.BaseResponse;
+import com.tripbros.server.schedule.exception.SchedulePermissionException;
+import com.tripbros.server.schedule.exception.ScheduleRequestException;
+import com.tripbros.server.security.UnauthorizedAccessException;
 import com.tripbros.server.user.exception.RegisterException;
 
 @RestControllerAdvice
@@ -49,10 +51,26 @@ public class CustomExceptionHandler {
 			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, "잘못된 입력입니다.", messages));
 	}
 
+	@ExceptionHandler(BoardRequestException.class)
+	public ResponseEntity<BaseResponse<Object>> handler(BoardRequestException e){
+		ArrayList<String> messages = e.errors.getFieldErrors()
+			.stream()
+			.map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+			.collect(Collectors.toCollection(ArrayList::new));
+		return ResponseEntity.badRequest()
+			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, "잘못된 입력입니다.", messages));
+	}
+
 	@ExceptionHandler(SchedulePermissionException.class)
 	public ResponseEntity<BaseResponse<Object>> handler(SchedulePermissionException e){
 		return ResponseEntity.badRequest()
 			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, e.getMessage(), null));
+	}
+
+	@ExceptionHandler(BoardPermissionException.class)
+	public ResponseEntity<BaseResponse<Object>> handler(BoardPermissionException e){
+		return ResponseEntity.badRequest()
+			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, e.getMessage(),null));
 	}
 
 	@ExceptionHandler(UserPermissionException.class)
@@ -64,6 +82,12 @@ public class CustomExceptionHandler {
 
 		return ResponseEntity.badRequest()
 			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, "사용자 권한이 유효하지 않습니다.", message));
+	}
+
+	@ExceptionHandler(ChatException.class)
+	public ResponseEntity<BaseResponse<Object>> handler(ChatException e){
+		return ResponseEntity.badRequest()
+			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, e.getMessage(),null));
 	}
 
 }
