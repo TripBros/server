@@ -26,6 +26,8 @@ import com.tripbros.server.common.dto.BaseResponse;
 import com.tripbros.server.security.AuthUser;
 import com.tripbros.server.security.SecurityUser;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,12 +35,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/chat")
+@Tag(name = "채팅 컨트롤러", description = "채팅 API")
 public class ChatController {
 
 	private final SimpMessagingTemplate template;
 	private final ChattingService chattingService;
 
-	@MessageMapping("/room/{roomId}")
+	@MessageMapping("/chat/{roomId}")
 	public void sendMessage(@DestinationVariable(value = "roomId") String roomId, MessageRequest request,
 		SimpMessageHeaderAccessor accessor) {
 		log.info("# roomId = {}", roomId);
@@ -59,6 +62,7 @@ public class ChatController {
 		template.convertAndSend("/sub/room/" + roomId, response);
 	}
 
+	@Operation(summary = "테스트용, 현재 사용 금지")
 	@PostMapping("/room/{roomId}/enter")
 	public HttpStatus enterRoom(@PathVariable Long roomId) {
 
@@ -70,6 +74,7 @@ public class ChatController {
 		return HttpStatus.OK;
 	}
 
+	@Operation(summary = "board ID를 입력받아, 채팅방 신규 개설 또는 로드")
 	@PostMapping
 	public ResponseEntity<BaseResponse<String>> doSingleChat(@AuthUser SecurityUser user, @RequestParam Long boardId) {
 		UUID chatroomId = chattingService.getOneToOneChatroom(user.getUser(), boardId);
@@ -78,6 +83,8 @@ public class ChatController {
 				chatroomId.toString()));
 	}
 
+
+	@Operation(summary = "채팅방 ID를 입력받아, 채팅 데이터 불러오기")
 	@GetMapping("/{roomId}")
 	public ResponseEntity<BaseResponse<List<MessageResponse>>> getChatData(@AuthUser SecurityUser user,
 		@PathVariable UUID roomId) {
@@ -86,11 +93,12 @@ public class ChatController {
 			new BaseResponse<>(true, HttpStatus.OK, ChatResultMessage.MESSAGES_LOAD_SUCCESS.getMessage(), messages));
 	}
 
+	@Operation(summary = "사용자가 속한 모든 채팅방 조회")
 	@GetMapping
 	public ResponseEntity<BaseResponse<List<ChatroomResponse>>> getAllChatroom(@AuthUser SecurityUser user) {
 		List<ChatroomResponse> chatroom = chattingService.getAllChatroom(user.getUser());
 		return ResponseEntity.ok(
-			new BaseResponse<>(true, HttpStatus.OK, ChatResultMessage.MESSAGES_LOAD_SUCCESS.getMessage(), chatroom));
+			new BaseResponse<>(true, HttpStatus.OK, ChatResultMessage.CHATROOM_LOAD_SUCCESS.getMessage(), chatroom));
 	}
 
 }
