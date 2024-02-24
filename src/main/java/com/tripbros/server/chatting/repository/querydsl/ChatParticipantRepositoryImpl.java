@@ -1,7 +1,10 @@
 package com.tripbros.server.chatting.repository.querydsl;
 
+import static com.tripbros.server.board.domain.QBoard.*;
 import static com.tripbros.server.chatting.domain.QChatroom.*;
 import static com.tripbros.server.chatting.domain.QChatroomParticipant.*;
+import static com.tripbros.server.recommend.domain.QLocate.*;
+import static com.tripbros.server.schedule.domain.QSchedule.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +52,7 @@ public class ChatParticipantRepositoryImpl implements ChatParticipantRepositoryC
 					chatroom.title,
 					new CaseBuilder()
 						.when(chatroom.isGroupChat.isTrue()).then(
-							chatroom.board.user.profileImage
+							board.user.profileImage
 						)
 						.otherwise(JPAExpressions.select(subUser.profileImage)
 							.from(chatroomParticipant)
@@ -59,11 +62,18 @@ public class ChatParticipantRepositoryImpl implements ChatParticipantRepositoryC
 							.limit(1)), // 프로필사진
 					chatroom.lastMessage,
 					chatroom.updatedAt,
-					chatroom.isGroupChat
+					chatroom.isGroupChat,
+					locate.city,
+					schedule.startDate,
+					schedule.endDate,
+					board.requiredHeadCount
 				)
 			)
 			.from(chatroomParticipant)
-			.join(chatroomParticipant.chatroom, chatroom)
+			.innerJoin(chatroomParticipant.chatroom, chatroom)
+			.innerJoin(chatroom.board, board)
+			.innerJoin(board.schedule, schedule)
+			.innerJoin(schedule.locate, locate)
 			.join(chatroomParticipant.user, QUser.user).on(chatroomParticipant.user.eq(user))
 			.fetch();
 	}
