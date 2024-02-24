@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 
 import com.tripbros.server.board.domain.Board;
-import com.tripbros.server.board.repository.BoardRepository;
 import com.tripbros.server.common.exception.UserPermissionException;
 import com.tripbros.server.recommend.domain.Locate;
 import com.tripbros.server.recommend.repository.LocateRepository;
@@ -30,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ScheduleService {
 
 	private final ScheduleRepository scheduleRepository;
-	private final BoardRepository boardRepository;
 	private final LocateRepository locateRepository;
 
 	public Schedule createSchedule(User user, CreateScheduleRequestDTO createScheduleRequestDTO){
