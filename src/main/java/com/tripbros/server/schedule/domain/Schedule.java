@@ -83,4 +83,23 @@ public class Schedule {
 		this.host = host;
 		return this;
 	}
+
+	public void setOwner(User user) {
+		this.user = user;
+	}
+
+	public static Schedule copyValueWithoutMemo(Schedule hostSchedule, User user) {
+		return Schedule.builder()
+			.user(user)
+			.host(hostSchedule)
+			.locate(hostSchedule.getLocate())
+			.placeName(hostSchedule.getPlaceName())
+			.placeId(hostSchedule.getPlaceId())
+			.placeUrl(hostSchedule.getPlaceUrl())
+			.title(hostSchedule.getTitle())
+			.startDate(hostSchedule.getStartDate())
+			.endDate(hostSchedule.getEndDate())
+			.hostFlag(false)
+			.build();
+	}
 }

@@ -5,9 +5,11 @@ import static com.tripbros.server.chatting.domain.QChatroom.*;
 import static com.tripbros.server.chatting.domain.QChatroomParticipant.*;
 import static com.tripbros.server.recommend.domain.QLocate.*;
 import static com.tripbros.server.schedule.domain.QSchedule.*;
+import static com.tripbros.server.user.domain.QUser.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -78,4 +80,12 @@ public class ChatParticipantRepositoryImpl implements ChatParticipantRepositoryC
 			.fetch();
 	}
 
+	@Override
+	public User getOpponentUserByChatroomId(UUID chatroomId, User me) {
+		return queryFactory.select(user)
+			.from(chatroomParticipant)
+			.where(chatroomParticipant.chatroom.id.eq(chatroomId)
+				.and(chatroomParticipant.user.ne(me)))
+			.fetchOne();
+	}
 }

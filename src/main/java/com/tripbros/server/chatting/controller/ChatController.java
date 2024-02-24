@@ -23,6 +23,8 @@ import com.tripbros.server.chatting.dto.MessageResponse;
 import com.tripbros.server.chatting.enumerate.ChatResultMessage;
 import com.tripbros.server.chatting.service.ChattingService;
 import com.tripbros.server.common.dto.BaseResponse;
+import com.tripbros.server.schedule.enumerate.ScheduleResultMessage;
+import com.tripbros.server.schedule.service.WaitingService;
 import com.tripbros.server.security.AuthUser;
 import com.tripbros.server.security.SecurityUser;
 
@@ -40,6 +42,7 @@ public class ChatController {
 
 	private final SimpMessagingTemplate template;
 	private final ChattingService chattingService;
+	private final WaitingService waitingService;
 
 	@MessageMapping("/chat/{roomId}")
 	public void sendMessage(@DestinationVariable(value = "roomId") String roomId, MessageRequest request,
@@ -100,5 +103,13 @@ public class ChatController {
 		return ResponseEntity.ok(
 			new BaseResponse<>(true, HttpStatus.OK, ChatResultMessage.CHATROOM_LOAD_SUCCESS.getMessage(), chatroom));
 	}
+
+	@Operation(summary = "일정 확정 버튼을 기능하는 API")
+	@PostMapping("/{roomId}/schedule")
+	public ResponseEntity<BaseResponse<Object>> joinSchedule(@AuthUser SecurityUser user, @PathVariable UUID roomId) {
+		ScheduleResultMessage message = waitingService.confirmSchedule(user.getUser(), roomId);
+		return ResponseEntity.ok(new BaseResponse<>(true, HttpStatus.OK, message.getMessage(), null));
+	}
+
 
 }

@@ -2,9 +2,12 @@ package com.tripbros.server.schedule.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
+import com.tripbros.server.board.domain.Board;
+import com.tripbros.server.board.repository.BoardRepository;
 import com.tripbros.server.common.exception.UserPermissionException;
 import com.tripbros.server.recommend.domain.Locate;
 import com.tripbros.server.recommend.repository.LocateRepository;
@@ -27,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ScheduleService {
 
 	private final ScheduleRepository scheduleRepository;
+	private final BoardRepository boardRepository;
 	private final LocateRepository locateRepository;
 
 	public Schedule createSchedule(User user, CreateScheduleRequestDTO createScheduleRequestDTO){
@@ -79,6 +83,25 @@ public class ScheduleService {
 	private static void checkUserPermission(User user, Schedule schedule) {
 		if (!schedule.getUser().getId().equals(user.getId()))
 			throw new UserPermissionException();
+	}
+
+	public void joinCompanionSchedule(User user, User opponent, Board board) {
+		//board에는 schedule, user가 fetch join 되어 있음
+		User hostUser = board.getUser();
+		Schedule baseSchedule = board.getSchedule();
+		baseSchedule.setOwner(hostUser); //update (Dirty Checking)
+
+		User nonHostUser = findNonHostUser(user, opponent, hostUser);
+		Schedule copiedSchedule = Schedule.copyValueWithoutMemo(baseSchedule, nonHostUser);
+		scheduleRepository.save(copiedSchedule);
+
+	}
+
+	private static User findNonHostUser(User user, User opponent, User hostUser) {
+		return Stream.of(user, opponent)
+			.filter(u -> !u.getId().equals(hostUser.getId()))
+			.findFirst()
+			.orElseThrow(() -> new IllegalStateException("user, opponent중 host가 없습니다!"));
 	}
 
 }

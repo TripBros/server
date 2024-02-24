@@ -33,4 +33,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 		+ "ON (bookmark.board.id = b.id AND bookmark.user.id = :userId) "
 		+ "where b.user.id = :userId")
 	List<GetBoardResponseDTO> findMyAllGetDto(@Param("userId") Long userId);
+
 }
