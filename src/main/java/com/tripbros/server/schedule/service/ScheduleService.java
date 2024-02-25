@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 
 import com.tripbros.server.board.domain.Board;
+import com.tripbros.server.chatting.service.ChattingService;
 import com.tripbros.server.common.exception.UserPermissionException;
 import com.tripbros.server.recommend.domain.Locate;
 import com.tripbros.server.recommend.repository.LocateRepository;
@@ -30,6 +31,7 @@ public class ScheduleService {
 
 	private final ScheduleRepository scheduleRepository;
 	private final LocateRepository locateRepository;
+	private final ChattingService chattingService;
 
 	public Schedule createSchedule(User user, CreateScheduleRequestDTO createScheduleRequestDTO){
 		Schedule schedule = createScheduleRequestDTO.toEntity(user, locateRepository);
@@ -93,6 +95,11 @@ public class ScheduleService {
 		Schedule copiedSchedule = Schedule.copyValueWithoutMemo(baseSchedule, nonHostUser);
 		scheduleRepository.save(copiedSchedule);
 
+		List<User> userByHost = scheduleRepository.findUserByHost(baseSchedule);
+		userByHost.add(hostUser);
+		if (userByHost.size() >= 3) {
+			chattingService.getGroupChatroom(userByHost, board);
+		}
 	}
 
 	private static User findNonHostUser(User user, User opponent, User hostUser) {

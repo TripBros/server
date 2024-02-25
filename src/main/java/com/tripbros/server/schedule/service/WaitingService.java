@@ -60,7 +60,6 @@ public class WaitingService {
 		waitingRepository.save(wait);
 		chattingService.sendSystemMessage(chatroomId, user.getNickname()+"님이 일정 확정을 원합니다.");
 
-		//채팅방에 알림 보내야함
 		return ScheduleResultMessage.ADD_WAITING_SUCCESS;
 	}
 }

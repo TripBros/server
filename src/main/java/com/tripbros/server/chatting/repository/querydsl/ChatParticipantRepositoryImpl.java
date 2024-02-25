@@ -44,6 +44,17 @@ public class ChatParticipantRepositoryImpl implements ChatParticipantRepositoryC
 	}
 
 	@Override
+	public Optional<Chatroom> findGroupChatroomByBoard(Board board) {
+		return Optional.ofNullable(queryFactory.select(chatroom)
+			.from(chatroomParticipant)
+			.join(chatroomParticipant.chatroom, chatroom)
+			.join(chatroom.board, QBoard.board)
+			.where(QBoard.board.eq(board))
+			.fetchOne()
+		);
+	}
+
+	@Override
 	public List<ChatroomResponse> getAllUserChatroomToDto(User user) {
 		QChatroomParticipant subParticipant = new QChatroomParticipant("subParticipant");
 		QUser subUser = new QUser("subUser");

@@ -68,6 +68,32 @@ public class ChattingService {
 		}).getId();
 	}
 
+	public UUID getGroupChatroom(List<User> userList, Board board) {
+		Chatroom groupChatroom = participantRepository.findGroupChatroomByBoard(board).orElseGet(() -> {
+			Chatroom chatroom = Chatroom.builder()
+				.board(board)
+				.updatedAt(LocalDateTime.now())
+				.status(true)
+				.isGroupChat(true)
+				.title(board.getTitle())
+				.build();
+			chatroomRepository.save(chatroom);
+			return chatroom;
+		});
+		userList.forEach(u -> {
+			if (!participantRepository.existsByUserAndChatroomId(u, groupChatroom.getId())) {
+				ChatroomParticipant participant = ChatroomParticipant.builder()
+					.user(u)
+					.chatroom(groupChatroom)
+					.build();
+				participantRepository.save(participant);
+				saveSystemMessage(groupChatroom.getId(), u.getNickname() + "님이 입장하였습니다.");
+			}
+		});
+
+		return groupChatroom.getId();
+
+	}
 	public Message saveMessage(Long userId, UUID chatroomId, MessageRequest request) {
 		User user = userRepository.getReferenceById(userId);
 		Chatroom chatroom = chatroomRepository.getReferenceById(chatroomId);

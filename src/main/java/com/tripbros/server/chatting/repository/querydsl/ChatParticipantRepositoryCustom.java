@@ -14,6 +14,8 @@ import com.tripbros.server.user.domain.User;
 public interface ChatParticipantRepositoryCustom {
 	Optional<Chatroom> findSingleRoomByBoardAndUser(Board board, User user);
 
+	Optional<Chatroom> findGroupChatroomByBoard(Board board);
+
 	List<ChatroomResponse> getAllUserChatroomToDto(User user);
 
 

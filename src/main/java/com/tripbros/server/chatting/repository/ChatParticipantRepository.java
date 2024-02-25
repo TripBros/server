@@ -1,5 +1,6 @@
 package com.tripbros.server.chatting.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,8 @@ import com.tripbros.server.user.domain.User;
 public interface ChatParticipantRepository extends JpaRepository<ChatroomParticipant, Long>,
 	ChatParticipantRepositoryCustom {
 	boolean existsByUserAndChatroomId(User user, UUID chatroomId);
+
+	boolean existsByChatroomIdAndUserNotIn(UUID chatroomId, List<User> users);
 
 
 }
