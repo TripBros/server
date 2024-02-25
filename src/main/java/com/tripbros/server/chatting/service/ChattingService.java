@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,8 @@ public class ChattingService {
 	private final BoardRepository boardRepository;
 	private final MessageRepository messageRepository;
 	private final UserRepository userRepository;
+	private final SimpMessagingTemplate template;
+
 
 	public UUID getOneToOneChatroom(User user, Long boardId) {
 		Board board = boardRepository.findById(boardId).orElseThrow(() -> new NoSuchElementException()); //TODO : 변경
@@ -78,6 +81,18 @@ public class ChattingService {
 		return messageRepository.save(message);
 	}
 
+	private Message saveSystemMessage(UUID chatroomId, String content) {
+		Chatroom chatroom = chatroomRepository.getReferenceById(chatroomId);
+		Message message = Message.builder()
+			.chatroom(chatroom)
+			.content(content)
+			.sentAt(LocalDateTime.now())
+			.user(null)
+			.build();
+		chatroom.updateLastMessageWithTime(content);
+		return messageRepository.save(message);
+	}
+
 	public List<MessageResponse> getAllChattingData(User user, UUID chatroomId) {
 		if (!checkUserPermission(user, chatroomId)){
 			throw new ChatException(ChatExceptionMessage.CANNOT_ACCESS_CHATROOM.getMessage());
@@ -92,6 +107,16 @@ public class ChattingService {
 
 	public List<ChatroomResponse> getAllChatroom(User user) {
 		return participantRepository.getAllUserChatroomToDto(user);
+	}
+
+	public void sendSystemMessage(UUID chatroomId, String message) {
+		MessageResponse response = MessageResponse.builder()
+			.isSystemMessage(true)
+			.content(message)
+			.sentAt(LocalDateTime.now())
+			.build();
+		saveSystemMessage(chatroomId, message);
+		template.convertAndSend("/sub/chat/" + chatroomId, response);
 	}
 
 }

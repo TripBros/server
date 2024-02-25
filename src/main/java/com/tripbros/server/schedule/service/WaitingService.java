@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tripbros.server.board.domain.Board;
 import com.tripbros.server.chatting.repository.ChatParticipantRepository;
 import com.tripbros.server.chatting.repository.ChatroomRepository;
+import com.tripbros.server.chatting.service.ChattingService;
 import com.tripbros.server.schedule.domain.WaitingCompanion;
 import com.tripbros.server.schedule.enumerate.ScheduleResultMessage;
 import com.tripbros.server.schedule.exception.SchedulePermissionException;
@@ -26,6 +27,7 @@ public class WaitingService {
 	private final WaitingRepository waitingRepository;
 	private final ChatParticipantRepository participantRepository;
 	private final ChatroomRepository chatroomRepository;
+	private final ChattingService chattingService;
 	private final ScheduleService scheduleService;
 
 	public ScheduleResultMessage confirmSchedule(User user, UUID chatroomId) {
@@ -43,6 +45,7 @@ public class WaitingService {
 			}
 			scheduleService.joinCompanionSchedule(user, opponent, companion.getBoard());
 			companion.setDeleted(true);
+			chattingService.sendSystemMessage(chatroomId, "상호 동의로 일정이 확정되었습니다!");
 			// 일정 확정 및 복사
 			return ScheduleResultMessage.CONFIRM_WAITING_SUCCESS;
 		}
@@ -55,6 +58,7 @@ public class WaitingService {
 			.user(user)
 			.build();
 		waitingRepository.save(wait);
+		chattingService.sendSystemMessage(chatroomId, user.getNickname()+"님이 일정 확정을 원합니다.");
 
 		//채팅방에 알림 보내야함
 		return ScheduleResultMessage.ADD_WAITING_SUCCESS;
