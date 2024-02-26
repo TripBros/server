@@ -1,13 +1,18 @@
 package com.tripbros.server.recommend.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.tripbros.server.board.exception.BoardPermissionException;
 import com.tripbros.server.common.exception.UserPermissionException;
+import com.tripbros.server.enumerate.City;
+import com.tripbros.server.enumerate.Country;
 import com.tripbros.server.recommend.domain.BookmarkedPlace;
 import com.tripbros.server.recommend.domain.Locate;
 import com.tripbros.server.recommend.domain.RecommendedLocate;
@@ -87,5 +92,13 @@ public class RecommendService {
 	private static void checkUserPermission(User user, Long userId) {
 		if (!userId.equals(user.getId()))
 			throw new UserPermissionException();
+	}
+
+	public Map<Country, List<City>> getCountryWithCity() {
+
+		List<Locate> locates = locateRepository.findAll();
+		Map<Country, List<City>> countryListMap = new HashMap<>();
+		locates.forEach(locate -> countryListMap.computeIfAbsent(locate.getCountry(), k -> new ArrayList<>()).add(locate.getCity()));
+		return (countryListMap);
 	}
 }
