@@ -62,7 +62,7 @@ public class ChatController {
 				accessor.getFirstNativeHeader("userProfileImage"))
 			.userName(accessor.getFirstNativeHeader("userNickname"))
 			.build();
-		template.convertAndSend("/sub/room/" + roomId, response);
+		template.convertAndSend("/sub/chat/" + roomId, response);
 	}
 
 	@Operation(summary = "테스트용, 현재 사용 금지")
