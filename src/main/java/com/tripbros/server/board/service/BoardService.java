@@ -90,6 +90,10 @@ public class BoardService {
 		return response;
 	}
 
+	public List<GetBoardResponseDTO> getMyBoards(User user) {
+		return boardRepository.findMyAllGetDto(user.getId());
+	}
+
 	public void updateBoardHit(Long boardId){
 		Optional<Board> target = boardRepository.findById(boardId);
 		Board board = target.orElseThrow(

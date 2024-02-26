@@ -8,6 +8,7 @@ import com.tripbros.server.user.domain.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,11 +26,11 @@ public class Schedule {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "locate_id")
 	private Locate locate;
 
@@ -81,5 +82,24 @@ public class Schedule {
 	public Schedule setHost(Schedule host){
 		this.host = host;
 		return this;
+	}
+
+	public void setOwner(User user) {
+		this.user = user;
+	}
+
+	public static Schedule copyValueWithoutMemo(Schedule hostSchedule, User user) {
+		return Schedule.builder()
+			.user(user)
+			.host(hostSchedule)
+			.locate(hostSchedule.getLocate())
+			.placeName(hostSchedule.getPlaceName())
+			.placeId(hostSchedule.getPlaceId())
+			.placeUrl(hostSchedule.getPlaceUrl())
+			.title(hostSchedule.getTitle())
+			.startDate(hostSchedule.getStartDate())
+			.endDate(hostSchedule.getEndDate())
+			.hostFlag(false)
+			.build();
 	}
 }

@@ -1,92 +1,197 @@
 package com.tripbros.server.schedule.service;
 
+import static org.mockito.Mockito.*;
+
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import com.tripbros.server.common.dto.BaseResponse;
+import com.tripbros.server.common.exception.UserPermissionException;
 import com.tripbros.server.enumerate.City;
 import com.tripbros.server.enumerate.Country;
 import com.tripbros.server.recommend.domain.Locate;
 import com.tripbros.server.recommend.repository.LocateRepository;
+import com.tripbros.server.schedule.domain.Schedule;
 import com.tripbros.server.schedule.dto.CreateScheduleRequestDTO;
 import com.tripbros.server.schedule.dto.EditScheduleRequestDTO;
 import com.tripbros.server.schedule.dto.GetScheduleResponseDTO;
+import com.tripbros.server.schedule.repository.ScheduleRepository;
 import com.tripbros.server.user.domain.User;
 import com.tripbros.server.user.repository.UserRepository;
 
-import jakarta.transaction.Transactional;
-
-@SpringBootTest
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class ScheduleServiceTest {
 
-	@Autowired
+	@InjectMocks
 	private ScheduleService scheduleService;
-	@Autowired
+	@Mock
 	private UserRepository userRepository;
+
+	@Mock
+	private ScheduleRepository scheduleRepository;
+
+	@Mock
+	private LocateRepository locateRepository;
 
 	private CreateScheduleRequestDTO requestDTO;
 	private Locate locate;
-	private User user = new User();
+	private User user = Mockito.mock(User.class);
 
 	@BeforeEach
-	void set(){
-		locate = new Locate(Country.KOREA, City.SEOUL);
+	void set() throws NoSuchFieldException, IllegalAccessException {
+		locate = new Locate(Country.JAPAN, City.TOKYO);
 
 		 requestDTO = new CreateScheduleRequestDTO(
-			"발리여행",
+			"도쿄 여행",
 			locate.getCountry(),
 			locate.getCity(),
+			431L,
+			"도쿄맛집",
+			"https://도쿄맛집.com",
 			LocalDate.parse("2024-01-01"),
 			LocalDate.parse("2024-01-05"),
 			"MEMO"
 		);
-		 userRepository.save(user);
+
+		Field id = user.getClass().getDeclaredField("id");
+		id.setAccessible(true);
+		id.set(user, 1020L); //PK 설정
+		// userRepository.save(user);
 	}
-	//
-	// @Test
-	// void createSchedule() {
-	// 	// given
-	// 	// when
-	// 	ResponseEntity<BaseResponse<Object>> response = scheduleService.createSchedule(user, requestDTO);
-	// 	// then
-	// 	Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-	// }
-	//
-	// @Test
-	// void editSchedule() {
-	// 	// given
-	// 	scheduleService.createSchedule(user, requestDTO);
-	//
-	// 	List<GetScheduleResponseDTO> data = scheduleService.getSchedules(user).getBody().data();
-	// 	Long schedId = data.get(data.size() - 1).id(); // 임시
-	// 	// when
-	// 	EditScheduleRequestDTO editRequest = new EditScheduleRequestDTO(schedId,
-	// 		"몽골 여행!!",
-	// 		Country.KOREA,
-	// 		City.SEOUL,
-	// 		LocalDate.parse("2024-03-01"),
-	// 		LocalDate.parse("2024-05-05"),
-	// 		"nope");
-	//
-	// 	ResponseEntity<BaseResponse<Object>> response = scheduleService.editSchedule(user, editRequest);
-	// 	// then
-	// 	getTest();
-	// 	Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-	// }
-	//
-	// private void getTest() {
-	// 	ResponseEntity<BaseResponse<List<GetScheduleResponseDTO>>> schedules = scheduleService.getSchedules(user);
-	// 	System.out.println("test schedules = " + schedules.getBody().data());
-	// }
+
+	@Test
+	@DisplayName("일정 생성 성공")
+	void createSchedule() {
+		// given
+		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		// when
+		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
+		// then
+		Assertions.assertThat(schedule.getTitle()).isEqualTo(requestDTO.title());
+		verify(scheduleRepository, times(1)).save(any(Schedule.class));
+	}
+
+	@Test
+	@DisplayName("일정 수정 성공")
+	void editSchedule() {
+		// given
+		doAnswer(invocation -> {
+			ReflectionTestUtils.setField((Schedule)invocation.getArgument(0), "id", 123L);
+			return null;
+		}).when(scheduleRepository).save(any(Schedule.class));
+
+		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
+
+		doReturn(Stream.of(schedule).toList()).when(scheduleRepository).findAllByUser(any(User.class));
+		doReturn(Optional.ofNullable(schedule)).when(scheduleRepository).findById(any(Long.class));
+		doReturn(makeLocate(Country.GUAM, City.GUAM)).when(locateRepository)
+			.findByCountryAndCity(any(Country.class), any(
+				City.class));
+
+		List<GetScheduleResponseDTO> schedules = scheduleService.getSchedules(user);
+		Long schedId = schedules.get(0).id();
+		// when
+		EditScheduleRequestDTO editRequest = getEditRequest(schedId);
+
+		Schedule editedSchedule = scheduleService.editSchedule(user, editRequest);
+		// then
+		Assertions.assertThat(editedSchedule.getLocate().getCity()).isEqualTo(City.GUAM);
+	}
+
+	@Test
+	@DisplayName("일정 수정 실패 _ 퍼미션")
+	void editScheduleFailByPermission() {
+		// given
+		doAnswer(invocation -> {
+			ReflectionTestUtils.setField((Schedule)invocation.getArgument(0), "id", 123L);
+			return null;
+		}).when(scheduleRepository).save(any(Schedule.class));
+
+		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
+
+		doReturn(Stream.of(schedule).toList()).when(scheduleRepository).findAllByUser(any(User.class));
+		doReturn(Optional.ofNullable(schedule)).when(scheduleRepository).findById(any(Long.class));
+
+
+		List<GetScheduleResponseDTO> schedules = scheduleService.getSchedules(user);
+		Long schedId = schedules.get(0).id();
+		// when
+		EditScheduleRequestDTO editRequest = getEditRequest(schedId);
+
+		// then
+		Assertions.assertThatThrownBy(() -> scheduleService.editSchedule(new User(), editRequest))
+			.isInstanceOf(UserPermissionException.class);
+	}
+
+	private static EditScheduleRequestDTO getEditRequest(Long schedId) {
+		EditScheduleRequestDTO editRequest = new EditScheduleRequestDTO(schedId,
+			"괌 여행!!",
+			Country.GUAM,
+			City.GUAM,
+			432L,
+			"괌맛집",
+			"https://괌맛집.com",
+			LocalDate.parse("2024-03-01"),
+			LocalDate.parse("2024-05-05"),
+			"nope");
+		return editRequest;
+	}
+
+	private static Locate makeLocate(Country country, City city) {
+		return new Locate(country, city);
+	}
+
+	@Test
+	@DisplayName("일정 삭제 성공")
+	void deleteSchedule() {
+		// given
+		doAnswer(invocation -> {
+			ReflectionTestUtils.setField((Schedule)invocation.getArgument(0), "id", 123L);
+			return null;
+		}).when(scheduleRepository).save(any(Schedule.class));
+
+		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
+		doReturn(Optional.ofNullable(schedule)).when(scheduleRepository).findById(any(Long.class));
+		// when
+		scheduleService.deleteSchedule(user ,schedule.getId());
+		// then
+		verify(scheduleRepository, times(1)).deleteById(any(Long.class));
+	}
+
+	@Test
+	@DisplayName("일정 삭제 실패")
+	void deleteScheduleFailByPermission() {
+		// given
+		doAnswer(invocation -> {
+			ReflectionTestUtils.setField((Schedule)invocation.getArgument(0), "id", 123L);
+			return null;
+		}).when(scheduleRepository).save(any(Schedule.class));
+
+		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
+		doReturn(Optional.ofNullable(schedule)).when(scheduleRepository).findById(any(Long.class));
+
+		// when
+		Assertions.assertThatThrownBy(() -> scheduleService.deleteSchedule(new User(), schedule.getId()))
+			.isInstanceOf(UserPermissionException.class);
+	}
+
 	//
 	// @Test
 	// void getSchedules() {
@@ -100,17 +205,4 @@ class ScheduleServiceTest {
 	// 	Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 	// }
 	//
-	// @Test
-	// void deleteSchedule() {
-	// 	// given
-	// 	scheduleService.createSchedule(user,requestDTO);
-	// 	List<GetScheduleResponseDTO> data = scheduleService.getSchedules(user).getBody().data();
-	// 	Long schedId = data.get(data.size() - 1).id();
-	// 	getTest();
-	// 	// when
-	// 	ResponseEntity<BaseResponse<Object>> response = scheduleService.deleteSchedule(schedId);
-	// 	// then
-	// 	getTest();
-	// 	Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-	// }
 }

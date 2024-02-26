@@ -1,5 +1,7 @@
 package com.tripbros.server.security;
 
+import static com.tripbros.server.security.JwtFilter.*;
+
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,12 +10,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -71,7 +75,7 @@ public class TokenProvider {
 			.build()
 			.parseClaimsJws(token)
 			.getBody()
-			.get("user-email", String.class);
+			.get("sub", String.class);
 	}
 	public boolean validateToken(String token) {
 		try {
@@ -79,10 +83,13 @@ public class TokenProvider {
 			return true;
 		} catch (SecurityException | MalformedJwtException e){
 			log.info("잘못된 JWT 서명");
+			throw new UnauthorizedAccessException(SecurityExceptionMessage.MalformedJwt.getMessage());
 		} catch (ExpiredJwtException e){
 			log.info("만료된 JWT");
+			throw new UnauthorizedAccessException(SecurityExceptionMessage.ExpiredJwt.getMessage());
 		} catch (UnsupportedJwtException e){
 			log.info("지원하지 않는 JWT");
+			throw new UnauthorizedAccessException(SecurityExceptionMessage.UnsupportedJwt.getMessage());
 		} catch (IllegalArgumentException e){
 			log.info("잘못된 JWT");
 		}
@@ -106,6 +113,15 @@ public class TokenProvider {
 			.setExpiration(validity)
 			.compact();
 		return JwtDTO.builder().grantType("Bearer").accessToken(accessToken).build();
+	}
+
+	public String extractJwtFromStomp(final StompHeaderAccessor accessor) {
+
+		String bearer = accessor.getFirstNativeHeader(AUTHORIZATION_HEADER);
+		if (StringUtils.hasText(bearer) && bearer.startsWith(BEARER_PREFIX)) {
+			return bearer.substring(7);
+		}
+		return null;
 	}
 
 

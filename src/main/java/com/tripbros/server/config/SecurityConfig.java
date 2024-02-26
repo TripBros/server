@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.tripbros.server.security.JwtExceptionHandlerFilter;
 import com.tripbros.server.security.JwtFilter;
 import com.tripbros.server.security.TokenProvider;
 import com.tripbros.server.security.UserDetailsServiceImpl;
@@ -25,14 +26,15 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)  throws Exception{
 		httpSecurity
-				.authorizeHttpRequests((authorize) -> authorize
-						.requestMatchers("/", "/css/**", "/fonts/**").permitAll()
-						.requestMatchers("/api/register").permitAll()
-						.anyRequest().permitAll())
-				.csrf((csrf) -> csrf.disable())
+			.authorizeHttpRequests((authorize) -> authorize
+				.requestMatchers("/", "/css/**", "/fonts/**").permitAll()
+				.requestMatchers("/api/register").permitAll()
+				.anyRequest().permitAll())
+			.csrf((csrf) -> csrf.disable())
 			.cors((cors) -> cors.disable()) // FIXME : 프론트 배포시 제거해주세요
-				.sessionManagement((manage) -> manage.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+			.sessionManagement((manage) -> manage.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JwtExceptionHandlerFilter(), JwtFilter.class);
 		return httpSecurity.build();
 
 	}
