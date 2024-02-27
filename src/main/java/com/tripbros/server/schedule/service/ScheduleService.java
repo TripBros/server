@@ -49,6 +49,8 @@ public class ScheduleService {
 			() -> new SchedulePermissionException("존재하지 않은 일정입니다."));
 		if(user != null)
 			checkUserPermission(user, schedule);
+		if (!schedule.isHostFlag())
+			throw new SchedulePermissionException("동행 일정은 관리자만 수정 할 수 있습니다.");
 
 		Locate modifiedLocate = locateRepository.findByCountryAndCity(editScheduleRequestDTO.country(), editScheduleRequestDTO.city());
 		Schedule result = target.get().editSchedule(editScheduleRequestDTO, modifiedLocate);
@@ -74,6 +76,8 @@ public class ScheduleService {
 			() -> new SchedulePermissionException("존재하지 않은 일정입니다."));
 		if(user != null)
 			checkUserPermission(user, schedule);
+		if (scheduleRepository.existsByHost(schedule))
+			throw new SchedulePermissionException("동행자가 존재하는 일정은 삭제 할 수 없습니다.");
 
 		scheduleRepository.deleteById(scheduleId);
 
@@ -106,7 +110,7 @@ public class ScheduleService {
 		return Stream.of(user, opponent)
 			.filter(u -> !u.getId().equals(hostUser.getId()))
 			.findFirst()
-			.orElseThrow(() -> new IllegalStateException("user, opponent중 host가 없습니다!"));
+			.orElseThrow(() -> new IllegalStateException("오류가 발생했습니다 : Host User Not Found"));
 	}
 
 }
