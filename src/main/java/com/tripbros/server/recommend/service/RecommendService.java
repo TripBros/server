@@ -2,13 +2,19 @@ package com.tripbros.server.recommend.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.google.maps.GeoApiContext;
+import com.google.maps.PlacesApi;
+import com.google.maps.model.PlaceDetails;
+import com.google.maps.model.PlacesSearchResponse;
 import com.tripbros.server.board.exception.BoardPermissionException;
 import com.tripbros.server.common.exception.UserPermissionException;
 import com.tripbros.server.enumerate.City;
@@ -18,7 +24,9 @@ import com.tripbros.server.recommend.domain.Locate;
 import com.tripbros.server.recommend.domain.RecommendedLocate;
 import com.tripbros.server.recommend.dto.GetBookmarkedPlaceResponseDTO;
 import com.tripbros.server.recommend.dto.GetRecommendedLocateResponseDTO;
+import com.tripbros.server.recommend.dto.GetRecommendedPlacesResponseDTO;
 import com.tripbros.server.recommend.dto.UpdateBookmarkedPlaceRequestDTO;
+import com.tripbros.server.recommend.exception.GoogleApiException;
 import com.tripbros.server.recommend.repository.BookmarkedPlaceRepository;
 import com.tripbros.server.recommend.repository.LocateRepository;
 import com.tripbros.server.recommend.repository.RecommendedLocateRepository;
@@ -38,6 +46,9 @@ public class RecommendService {
 	private final BookmarkedPlaceRepository bookmarkedPlaceRepository;
 	private final LocateRepository locateRepository;
 
+	@Value("${google.api.key}")
+	private String apiKey;
+
 	// 분기 상관 없이 전체 데이터 조회
 	public List<GetRecommendedLocateResponseDTO> getAllRecommendLocate(){
 		List<RecommendedLocate> locates = recommendedLocateRepository.findAll();
@@ -47,6 +58,61 @@ public class RecommendService {
 		return result;
 	}
 
+	public List<GetRecommendedPlacesResponseDTO> getAllRecommendedPlace(String country, String city){
+		List<GetRecommendedPlacesResponseDTO> result = new ArrayList<>();
+
+		String searchKeyword = country.concat(" ").concat(city).concat(" 맛집");
+
+		GeoApiContext context = new GeoApiContext.Builder()
+			.apiKey(apiKey)
+			.build();
+
+		try{
+			PlacesSearchResponse response = PlacesApi.textSearchQuery(context, searchKeyword).await();
+
+			if(response.results != null && response.results.length > 0){
+				Arrays.stream(response.results)
+					.forEach(res -> result.add(getPlaceDetails(res.placeId)));
+			}
+			else log.info("No place found : "+searchKeyword);
+		}
+		catch (Exception e){
+			e.printStackTrace();
+			throw new GoogleApiException();
+		}
+
+		return result;
+	}
+
+	private GetRecommendedPlacesResponseDTO getPlaceDetails(String placeId){
+		GeoApiContext context = new GeoApiContext.Builder()
+			.apiKey(apiKey)
+			.build();
+		String photoUrl;
+
+		try{
+			PlaceDetails details = PlacesApi.placeDetails(context, placeId).language("ko").await();
+			if(details.photos == null)
+				photoUrl = null;
+			else {
+				photoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&photoreference="
+					.concat(details.photos[0].photoReference)
+					.concat("&key=")
+					.concat(apiKey);
+			}
+
+			return new GetRecommendedPlacesResponseDTO(
+				details.placeId,
+				details.name,
+				details.url.toString(),
+				details.rating,
+				photoUrl
+			);
+		}catch (Exception e){
+			e.printStackTrace();
+			throw new GoogleApiException();
+		}
+	}
 	// 맛집 데이터 북마크
 	public String updateBookmarkPlace(User user, UpdateBookmarkedPlaceRequestDTO requestDTO){
 		Optional<BookmarkedPlace> target = bookmarkedPlaceRepository.findByUserAndPlaceId(user,
@@ -62,6 +128,7 @@ public class RecommendService {
 				requestDTO.placeId(),
 				requestDTO.placeName(),
 				requestDTO.placeUrl(),
+				requestDTO.placeRating(),
 				requestDTO.placeImage(),
 				LocalDateTime.now());
 			bookmarkedPlaceRepository.save(bookmarked);
