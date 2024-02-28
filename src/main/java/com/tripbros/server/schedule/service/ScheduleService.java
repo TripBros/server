@@ -32,6 +32,7 @@ public class ScheduleService {
 	private final ScheduleRepository scheduleRepository;
 	private final LocateRepository locateRepository;
 	private final ChattingService chattingService;
+	private final EditRequestService editRequestService;
 
 	public Schedule createSchedule(User user, CreateScheduleRequestDTO createScheduleRequestDTO){
 		Schedule schedule = createScheduleRequestDTO.toEntity(user, locateRepository);
@@ -54,6 +55,9 @@ public class ScheduleService {
 
 		Locate modifiedLocate = locateRepository.findByCountryAndCity(editScheduleRequestDTO.country(), editScheduleRequestDTO.city());
 		Schedule result = target.get().editSchedule(editScheduleRequestDTO, modifiedLocate);
+		if (scheduleRepository.existsByHost(schedule)) { //동행 일정인 경우
+			editRequestService.sendEditRequest(schedule);
+		}
 
 		log.info("success to edit schedule");
 		return result;
