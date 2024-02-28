@@ -73,14 +73,14 @@ public class UserController {
 
 	@GetMapping("/email-check")
 	@Operation(summary = "이메일 중복 검사")
-	public ResponseEntity<BaseResponse<Object>> checkEmail(@RequestParam String email){
+	public ResponseEntity<BaseResponse<Object>> checkEmail(@RequestParam String email) {
 		registerService.checkEmailDuplication(email); //중복시 Exception Throw
 		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, null));
 	}
 
 	@GetMapping("/nickname-check")
 	@Operation(summary = "닉네임 중복 검사")
-	public ResponseEntity<BaseResponse<Object>> checkNickname(@RequestParam String nickname){
+	public ResponseEntity<BaseResponse<Object>> checkNickname(@RequestParam String nickname) {
 		registerService.checkEmailDuplication(nickname); //중복시 Exception Throw
 		return ResponseEntity.ok().body(new BaseResponse<>(true, HttpStatus.OK, null, null));
 	}
@@ -95,7 +95,7 @@ public class UserController {
 
 	@DeleteMapping
 	@Operation(summary = "회원 탈퇴")
-	public ResponseEntity<BaseResponse<Object>> resignUser(@AuthUser SecurityUser user, @RequestParam String password){
+	public ResponseEntity<BaseResponse<Object>> resignUser(@AuthUser SecurityUser user, @RequestParam String password) {
 		registerService.deleteUser(user.getUser(), password);
 		return ResponseEntity.ok()
 			.body(new BaseResponse<>(true, HttpStatus.OK, UserResultMessage.RESIGN_SUCCESS.getMessage(), null));
@@ -103,7 +103,13 @@ public class UserController {
 
 	@GetMapping("/test") // 테스트 온리 컨트롤러
 	@Operation(summary = "백엔드 자체 테스트 전용 API 입니다.")
-	public String  test(@AuthUser SecurityUser user) {
+	public String test(@AuthUser SecurityUser user) {
 		return user.getUser().getProfileImage();
+	}
+
+	@GetMapping("/nickname")
+	@Operation(summary = "유저 닉네임 반환 API")
+	public ResponseEntity<BaseResponse<String>> getUserNickname(@AuthUser SecurityUser user) {
+		return ResponseEntity.ok(new BaseResponse<>(true, HttpStatus.OK, "성공", user.getUser().getNickname()));
 	}
 }
