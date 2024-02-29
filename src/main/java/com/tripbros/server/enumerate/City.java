@@ -1,14 +1,12 @@
 package com.tripbros.server.enumerate;
 
 public enum City {
-	OSAKA, TOKYO, FUKUOKA, OKINAWA, SAPPORO, NAGOYA, BANGKOK, PHUKET, DANANG,
-	NHATRANG, HOCHIMINHCITY, HANOI, PHUQUOC, CEBU, MANILA, CLARKFIELD, TAIPEI, SINGAPORE, DENPASAR, HONGKONG,
-	KOTAKINABALU, MACAU, SHANGHAI, GUANGZHOU, BEIJING, QINGDAO, SHENZHEN, YANJI, HANGZHOU, XIAMEN, DALIAN, PARIS,
-	LONDON, ROME, MILAN, BARCELONA, MADRID, FRANKFURT, MUNICH, ISTANBUL, ZURICH, PRAGUE, BUDAPEST, VIENNA, AMSTERDAM,
-	LISBON, WARSAW, HELSINKI, ATHENS, LOSANGELES, HONOLULU, NEWYORK, SANFRANCISCO, SEATTLE, CHICAGO, LASVEGAS,
-	WASHINGTON, ATLANTA, NEWARK, VANCOUVER, TORONTO, GUAM, SYDNEY, BRISBANE, MELBOURNE, CAIRNS, PERTH, SAIPAN,
-	AUCKLAND, CHRISTCHURCH, QUEENSTOWN, KOROR, CANCUN, MEXICOCITY, MONTERREY, LIMA, SAOPAULO, RIODEJANEIRO, BOGOTA,
-	BUENOSAIRES, SANTIAGO, HAVANA, ULAANBAATAR, PHNOMPENH, SIEMREAP, VIENTIANE, MALE, ALMATY, TASHKENT, DELHI, YANGON,
-	KATHMANDU, DUBAI, ABUDHABI, TELAVIV, TEHRAN, DOHA, AMMAN, KUWAIT, DAMMAM, JEDDAH, RIYADH, CAIRO, CAPETOWN,
-	JOHANNESBURG, KINSHASA, DARESSALAAM, ZANZIBAR, CASABLANCA, NAIROBI, ADDISABABA, ENTEBBE
+	오사카, 도쿄, 후쿠오카, 오키나와, 삿포로, 나고야, 방콕, 다낭, 나트랑, 세부, 타이베이, 호치민시, 싱가포르, 마닐라, 덴파사르, 홍콩, 하노이,
+	클라크필드, 코타키나발루, 푸켓, 푸꾸옥, 마카오, 상하이, 광저우, 베이징, 청도, 심천, 연길, 항주, 심양, 대련, 파리, 런던, 로마,
+	바르셀로나, 프랑크푸르트, 이스탄불, 취리히, 프라하, 부다페스트, 마드리드, 비엔나, 밀라노, 암스테르담, 뮌헨, 리스본, 바르샤바, 헬싱키,
+	아테네, 로스앤젤레스, 호놀룰루, 뉴욕, 샌프란시스코, 밴쿠버, 토론토, 시애틀, 시카고, 라스베이거스, 워싱턴, 아틀란타,
+	괌, 시드니, 사이판, 오클랜드, 브리즈번, 멜버른, 크라이스트쳐치, 케언즈, 퀸스타운, 퍼스, 코로르, 칸쿤, 멕시코시티, 리마, 몬테레이,
+	상파울루, 리오데자네이로, 보고타, 부에노스아이레스, 산티아고, 하바나, 울란바토르, 프놈펜, 비엔티안, 말레, 알마티, 타쉬켄트, 델리,
+	양곤, 시엠립, 카트만두, 두바이, 아부다비, 텔아비브, 테헤란, 도하, 암만, 쿠웨이트, 담맘, 젯다, 리야드, 카이로, 케이프타운,
+	요하네스버그, 킨샤사, 다르에스살람, 카사블랑카, 나이로비, 잔지바르, 아디스아바바, 엔테베
 }
