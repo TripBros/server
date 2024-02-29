@@ -53,7 +53,8 @@ public class ScheduleService {
 		if (!schedule.isHostFlag())
 			throw new SchedulePermissionException("동행 일정은 관리자만 수정 할 수 있습니다.");
 
-		Locate modifiedLocate = locateRepository.findByCountryAndCity(editScheduleRequestDTO.country(), editScheduleRequestDTO.city());
+		Locate modifiedLocate = locateRepository.findByCountryAndCity(editScheduleRequestDTO.country(),
+			editScheduleRequestDTO.city()).orElseThrow(() -> new SchedulePermissionException("존재하지 않는 국가/도시 조합입니다."));
 		Schedule result = target.get().editSchedule(editScheduleRequestDTO, modifiedLocate);
 		if (scheduleRepository.existsByHost(schedule)) { //동행 일정인 경우
 			editRequestService.sendEditRequest(schedule);

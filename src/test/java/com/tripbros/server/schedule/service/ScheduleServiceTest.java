@@ -76,7 +76,7 @@ class ScheduleServiceTest {
 	@DisplayName("일정 생성 성공")
 	void createSchedule() {
 		// given
-		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		doReturn(Optional.ofNullable(locate)).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
 		// when
 		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
 		// then
@@ -93,12 +93,12 @@ class ScheduleServiceTest {
 			return null;
 		}).when(scheduleRepository).save(any(Schedule.class));
 
-		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		doReturn(Optional.ofNullable(locate)).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
 		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
 
 		doReturn(Stream.of(schedule).toList()).when(scheduleRepository).findAllByUser(any(User.class));
 		doReturn(Optional.ofNullable(schedule)).when(scheduleRepository).findById(any(Long.class));
-		doReturn(makeLocate(Country.괌, City.괌)).when(locateRepository)
+		doReturn(Optional.ofNullable(makeLocate(Country.괌, City.괌))).when(locateRepository)
 			.findByCountryAndCity(any(Country.class), any(
 				City.class));
 
@@ -121,7 +121,7 @@ class ScheduleServiceTest {
 			return null;
 		}).when(scheduleRepository).save(any(Schedule.class));
 
-		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		doReturn(Optional.ofNullable(locate)).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
 		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
 
 		doReturn(Stream.of(schedule).toList()).when(scheduleRepository).findAllByUser(any(User.class));
@@ -165,7 +165,7 @@ class ScheduleServiceTest {
 			return null;
 		}).when(scheduleRepository).save(any(Schedule.class));
 
-		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		doReturn(Optional.ofNullable(locate)).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
 		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
 		doReturn(Optional.ofNullable(schedule)).when(scheduleRepository).findById(any(Long.class));
 		// when
@@ -183,7 +183,7 @@ class ScheduleServiceTest {
 			return null;
 		}).when(scheduleRepository).save(any(Schedule.class));
 
-		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		doReturn(Optional.ofNullable(locate)).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
 		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
 		doReturn(Optional.ofNullable(schedule)).when(scheduleRepository).findById(any(Long.class));
 
