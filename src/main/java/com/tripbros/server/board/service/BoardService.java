@@ -111,7 +111,7 @@ public class BoardService {
 		);
 		checkUserPermission(user, board.getUser().getId());
 
-		board.updateDeadlineReached();
+		board.updateDeadlineReached(true);
 		log.info("success to update deadline reach");
 	}
 
@@ -131,6 +131,19 @@ public class BoardService {
 			scheduleService.deleteSchedule(null, targetSchedule.getId());
 
 		log.info("success to delete board");
+	}
+
+	public Boolean cancelDeadLineReached(User user, Long boardId){
+		Optional<Board> target = boardRepository.findById(boardId);
+
+		Board board = target.orElseThrow(() -> new BoardPermissionException("존재하지 않은 게시글 입니다."));
+		checkUserPermission(user, board.getUser().getId());
+
+		if(board.getSchedule().getStartDate().isBefore(LocalDate.now()))
+			return false;
+
+		board.updateDeadlineReached(false);
+		return true;
 	}
 
 	public String updateBookmarkedBoard(User user, Long boardId){
@@ -171,7 +184,7 @@ public class BoardService {
 
 		if(!boards.isEmpty()){
 			for(Board board : boards){
-				board.updateDeadlineReached();
+				board.updateDeadlineReached(true);
 			}
 		}
 	}

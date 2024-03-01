@@ -103,9 +103,27 @@ public class BoardController {
 		boardService.updateDeadlineReached(user.getUser(), boardId);
 
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
-			BoardResultMessage.UPDATE_DEADLINE_REACH.getMessage(), null);
+			BoardResultMessage.UPDATE_DEADLINE_REACH.getMessage(), "게시글 마감 완료");
 
 		return ResponseEntity.ok().body(response);
+	}
+
+	@DeleteMapping("/deadline-reached")
+	@Operation(summary = "일정 날짜가 지나지 않은 게시글에 한해 마감 취소")
+	public ResponseEntity<BaseResponse<Object>> cancelDeadlineReached(@AuthUser SecurityUser user, @RequestParam Long boardId) {
+		BaseResponse<Object> response;
+
+		if (boardService.cancelDeadLineReached(user.getUser(), boardId)){
+			response = new BaseResponse<>(true, HttpStatus.OK,
+				BoardResultMessage.UPDATE_DEADLINE_REACH.getMessage(), "게시글 마감 취소 완료");
+			return ResponseEntity.ok().body(response);
+		}
+
+		else {
+			response = new BaseResponse<>(false, HttpStatus.BAD_REQUEST,
+				"일정의 날짜가 지난 게시글은 마감을 취소할 수 없습니다.", "게시글 마감 취소 실패");
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
 
 	@DeleteMapping
