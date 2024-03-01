@@ -15,6 +15,7 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResponse;
+import com.google.maps.model.PlacesSearchResult;
 import com.tripbros.server.board.exception.BoardPermissionException;
 import com.tripbros.server.common.exception.UserPermissionException;
 import com.tripbros.server.enumerate.City;
@@ -71,13 +72,14 @@ public class RecommendService {
 			PlacesSearchResponse response = PlacesApi.textSearchQuery(context, searchKeyword).await();
 
 			if(response.results != null && response.results.length > 0){
-				Arrays.stream(response.results)
-					.forEach(res -> result.add(getPlaceDetails(res.placeId)));
+				for(PlacesSearchResult res : response.results){
+					GetRecommendedPlacesResponseDTO place = getPlaceDetails(res.placeId);
+					if(place != null) result.add(place);
+				}
 			}
 			else log.info("No place found : "+searchKeyword);
 		}
 		catch (Exception e){
-			e.printStackTrace();
 			throw new GoogleApiException();
 		}
 
@@ -93,10 +95,10 @@ public class RecommendService {
 		try{
 			PlaceDetails details = PlacesApi.placeDetails(context, placeId).language("ko").await();
 			if(details.photos == null)
-				photoUrl = null;
+				return null;
 			else {
 				photoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&photoreference="
-					.concat(details.photos[0].photoReference)
+					.concat(details.photos[1].photoReference)
 					.concat("&key=")
 					.concat(apiKey);
 			}
@@ -109,7 +111,6 @@ public class RecommendService {
 				photoUrl
 			);
 		}catch (Exception e){
-			e.printStackTrace();
 			throw new GoogleApiException();
 		}
 	}
