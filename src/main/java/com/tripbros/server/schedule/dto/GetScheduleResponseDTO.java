@@ -19,7 +19,7 @@ public record GetScheduleResponseDTO(Long id,
 									 @NotNull(message = "시작 날짜는 필수 입력 값입니다.") LocalDate startDate,
 									 @NotNull(message = "끝 날짜는 필수 입력 값입니다.") LocalDate endDate,
 									 String memo){
-	public static GetScheduleResponseDTO toDTO(Schedule schedule){
+	public static GetScheduleResponseDTO toDTO(Schedule schedule){ //FIXME : N+1 발생 검사
 		return new GetScheduleResponseDTO(
 			schedule.getId(),
 			schedule.getTitle(),

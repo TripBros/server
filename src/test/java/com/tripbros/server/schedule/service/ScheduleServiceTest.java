@@ -52,7 +52,7 @@ class ScheduleServiceTest {
 
 	@BeforeEach
 	void set() throws NoSuchFieldException, IllegalAccessException {
-		locate = new Locate(Country.JAPAN, City.TOKYO);
+		locate = new Locate(Country.일본 , City.도쿄);
 
 		 requestDTO = new CreateScheduleRequestDTO(
 			"도쿄 여행",
@@ -76,7 +76,7 @@ class ScheduleServiceTest {
 	@DisplayName("일정 생성 성공")
 	void createSchedule() {
 		// given
-		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		doReturn(Optional.ofNullable(locate)).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
 		// when
 		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
 		// then
@@ -93,12 +93,12 @@ class ScheduleServiceTest {
 			return null;
 		}).when(scheduleRepository).save(any(Schedule.class));
 
-		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		doReturn(Optional.ofNullable(locate)).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
 		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
 
 		doReturn(Stream.of(schedule).toList()).when(scheduleRepository).findAllByUser(any(User.class));
 		doReturn(Optional.ofNullable(schedule)).when(scheduleRepository).findById(any(Long.class));
-		doReturn(makeLocate(Country.GUAM, City.GUAM)).when(locateRepository)
+		doReturn(Optional.ofNullable(makeLocate(Country.괌, City.괌))).when(locateRepository)
 			.findByCountryAndCity(any(Country.class), any(
 				City.class));
 
@@ -109,7 +109,7 @@ class ScheduleServiceTest {
 
 		Schedule editedSchedule = scheduleService.editSchedule(user, editRequest);
 		// then
-		Assertions.assertThat(editedSchedule.getLocate().getCity()).isEqualTo(City.GUAM);
+		Assertions.assertThat(editedSchedule.getLocate().getCity()).isEqualTo(City.괌);
 	}
 
 	@Test
@@ -121,7 +121,7 @@ class ScheduleServiceTest {
 			return null;
 		}).when(scheduleRepository).save(any(Schedule.class));
 
-		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		doReturn(Optional.ofNullable(locate)).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
 		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
 
 		doReturn(Stream.of(schedule).toList()).when(scheduleRepository).findAllByUser(any(User.class));
@@ -141,8 +141,8 @@ class ScheduleServiceTest {
 	private static EditScheduleRequestDTO getEditRequest(Long schedId) {
 		EditScheduleRequestDTO editRequest = new EditScheduleRequestDTO(schedId,
 			"괌 여행!!",
-			Country.GUAM,
-			City.GUAM,
+			Country.괌,
+			City.괌,
 			432L,
 			"괌맛집",
 			"https://괌맛집.com",
@@ -165,7 +165,7 @@ class ScheduleServiceTest {
 			return null;
 		}).when(scheduleRepository).save(any(Schedule.class));
 
-		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		doReturn(Optional.ofNullable(locate)).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
 		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
 		doReturn(Optional.ofNullable(schedule)).when(scheduleRepository).findById(any(Long.class));
 		// when
@@ -183,7 +183,7 @@ class ScheduleServiceTest {
 			return null;
 		}).when(scheduleRepository).save(any(Schedule.class));
 
-		doReturn(locate).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
+		doReturn(Optional.ofNullable(locate)).when(locateRepository).findByCountryAndCity(any(Country.class), any(City.class));
 		Schedule schedule = scheduleService.createSchedule(user, requestDTO);
 		doReturn(Optional.ofNullable(schedule)).when(scheduleRepository).findById(any(Long.class));
 

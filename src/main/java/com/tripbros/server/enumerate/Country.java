@@ -1,10 +1,9 @@
 package com.tripbros.server.enumerate;
 
 public enum Country {
-	JAPAN, THAILAND, VIETNAM, PHILIPPINES, TAIWAN, SINGAPORE, INDONESIA, HONGKONG, MALAYSIA, MACAU, CHINA, FRANCE,
-	UNITEDKINGDOM, ITALY, SPAIN, GERMANY, TURKEY, SWITZERLAND, CZECHIA, HUNGARY, AUSTRIA, NETHERLANDS, PORTUGAL,
-	POLAND, FINLAND, GREECE, UNITEDSTATES, CANADA, GUAM, AUSTRALIA, SAIPAN, NEWZEALAND, PALAU, MEXICO, PERU,
-	BRAZIL, COLOMBIA, ARGENTINA, CHILE, CUBA, MONGOLIA, CAMBODIA, LAOS, MALDIVES, KAZAKHSTAN, UZBEKISTAN,
-	INDIA, MYANMAR, NEPAL, UNITEDARABEMIRATES, ISRAEL, IRAN, QATAR, JORDAN, KUWAIT, SAUDIARABIA, EGYPT,
-	SOUTHAFRICA, CONGO, TANZANIA, MOROCCO, KENYA, ETHIOPIA, UGANDA,
+	일본, 그리스, 대만, 미얀마, 사우디아라비아,  베트남, 미국, 태국, 브라질, 이집트, 모로코, 폴란드, 카타르, 우즈베키스탄, 헝가리, 괌, 홍콩,
+	스위스, 프랑스, 팔라우, 콜롬비아, 체코, 라오스, 오스트리아, 에티오피아, 이탈리아, 포르투갈, 필리핀, 싱가포르, 인도네시아, 몽골, 사이판,
+	호주, 아랍에미리트, 요르단, 말레이시아, 콩고, 독일, 쿠바, 이란, 우간다, 페루, 핀란드, 멕시코, 중국, 네팔, 쿠웨이트, 카자흐스탄,
+	영국, 이스라엘, 남아프리카공화국, 스페인, 칠레, 네델란드, 마카오, 뉴질랜드, 캐나다, 케냐, 캄보디아, 튀르키예, 몰디브, 인도, 탄자니아,
+	아르헨티나
 }

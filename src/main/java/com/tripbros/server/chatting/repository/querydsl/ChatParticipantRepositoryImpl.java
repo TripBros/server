@@ -49,7 +49,8 @@ public class ChatParticipantRepositoryImpl implements ChatParticipantRepositoryC
 			.from(chatroomParticipant)
 			.join(chatroomParticipant.chatroom, chatroom)
 			.join(chatroom.board, QBoard.board)
-			.where(QBoard.board.eq(board))
+			.where(QBoard.board.eq(board)
+				.and(chatroom.isGroupChat.isTrue()))
 			.fetchOne()
 		);
 	}

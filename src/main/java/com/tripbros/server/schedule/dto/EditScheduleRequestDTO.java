@@ -7,6 +7,7 @@ import com.tripbros.server.enumerate.Country;
 import com.tripbros.server.recommend.domain.Locate;
 import com.tripbros.server.recommend.repository.LocateRepository;
 import com.tripbros.server.schedule.domain.Schedule;
+import com.tripbros.server.schedule.exception.SchedulePermissionException;
 import com.tripbros.server.user.domain.User;
 
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +25,8 @@ public record EditScheduleRequestDTO (Long id,
 ){
 
 	public Schedule toEntity(User user, LocateRepository locateRepository){
-		Locate locate = locateRepository.findByCountryAndCity(country, city);
+		Locate locate = locateRepository.findByCountryAndCity(country, city)
+			.orElseThrow(() -> new SchedulePermissionException("존재하지 않는 국가/도시 조합입니다."));
 
 		return Schedule.builder()
 			.user(user)

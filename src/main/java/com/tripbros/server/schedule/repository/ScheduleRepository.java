@@ -1,6 +1,7 @@
 package com.tripbros.server.schedule.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,4 +14,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule,Long> {
 
 	@Query("select s.user from Schedule s join s.user where s.host = :hostSchedule")
 	List<User> findUserByHost(Schedule hostSchedule);
+
+	boolean existsByHost(Schedule hostSchedule);
+
+	Optional<Schedule> findByUserAndHost(User user, Schedule hostSchedule);
 }

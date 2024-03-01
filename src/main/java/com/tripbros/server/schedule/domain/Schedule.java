@@ -79,6 +79,16 @@ public class Schedule {
 		return this;
 	}
 
+	public void editScheduleWithoutMemo(Schedule schedule){
+		this.title = schedule.getTitle();
+		this.locate = schedule.getLocate();
+		this.startDate = schedule.getStartDate();
+		this.endDate = schedule.getEndDate();
+		this.placeId = schedule.getPlaceId();
+		this.placeName = schedule.getPlaceName();
+		this.placeUrl = schedule.getPlaceUrl();
+	}
+
 	public Schedule setHost(Schedule host){
 		this.host = host;
 		return this;
