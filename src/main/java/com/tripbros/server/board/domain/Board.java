@@ -101,6 +101,5 @@ public class Board {
 		this.bookmarkedCount += bookmarkedCount;
 	}
 	public void updateBoardHit(){ this.hit += 1; }
-
-	public void updateDeadlineReached(){ this.deadlineReachedFlag = true; }
+	public void updateDeadlineReached(Boolean flag){ this.deadlineReachedFlag = flag; }
 }
