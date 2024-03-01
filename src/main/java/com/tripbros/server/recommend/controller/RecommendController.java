@@ -51,7 +51,7 @@ public class RecommendController {
 
 	@GetMapping("/places")
 	@Operation(summary = "선택한 지역에 대해 모든 추천 맛집을 조회")
-	public ResponseEntity<BaseResponse<List<GetRecommendedPlacesResponseDTO>>> getAllRecommendedPlace(@RequestParam String country, @RequestParam String city){
+	public ResponseEntity<BaseResponse<List<GetRecommendedPlacesResponseDTO>>> getAllRecommendedPlace(@RequestParam Country country, @RequestParam City city){
 		List<GetRecommendedPlacesResponseDTO> result = recommendService.getAllRecommendedPlace(country, city);
 
 		BaseResponse<List<GetRecommendedPlacesResponseDTO>> response = new BaseResponse<>(true ,HttpStatus.OK,

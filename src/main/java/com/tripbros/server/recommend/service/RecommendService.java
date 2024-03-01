@@ -59,10 +59,10 @@ public class RecommendService {
 		return result;
 	}
 
-	public List<GetRecommendedPlacesResponseDTO> getAllRecommendedPlace(String country, String city){
+	public List<GetRecommendedPlacesResponseDTO> getAllRecommendedPlace(Country country, City city){
 		List<GetRecommendedPlacesResponseDTO> result = new ArrayList<>();
 
-		String searchKeyword = country.concat(" ").concat(city).concat(" 맛집");
+		String searchKeyword = country.toString().concat(" ").concat(city.toString()).concat(" 맛집");
 
 		GeoApiContext context = new GeoApiContext.Builder()
 			.apiKey(apiKey)
