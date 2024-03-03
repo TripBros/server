@@ -5,6 +5,7 @@ import static com.tripbros.server.chatting.domain.QChatroom.*;
 import static com.tripbros.server.chatting.domain.QChatroomParticipant.*;
 import static com.tripbros.server.recommend.domain.QLocate.*;
 import static com.tripbros.server.schedule.domain.QSchedule.*;
+import static com.tripbros.server.schedule.domain.QWaitingCompanion.*;
 import static com.tripbros.server.user.domain.QUser.*;
 
 import java.util.List;
@@ -77,6 +78,20 @@ public class ChatParticipantRepositoryImpl implements ChatParticipantRepositoryC
 					chatroom.lastMessage,
 					chatroom.updatedAt,
 					chatroom.isGroupChat,
+					new CaseBuilder()
+						.when(board.user.eq(user))
+						.then(true)
+						.otherwise(false), // isHost
+					//isConfirmed
+					new CaseBuilder()
+						.when(JPAExpressions.selectOne()
+							.from(waitingCompanion)
+							.where(waitingCompanion.board.eq(board)
+								.and((waitingCompanion.user.eq(user).or(waitingCompanion.opponent.eq(user))))
+								.and(waitingCompanion.isDeleted.isTrue()))
+							.exists())
+						.then(true)
+						.otherwise(false),
 					locate.city,
 					schedule.startDate,
 					schedule.endDate,

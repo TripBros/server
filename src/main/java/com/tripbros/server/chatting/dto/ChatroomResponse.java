@@ -13,6 +13,8 @@ public record ChatroomResponse(
 	String lastMessage,
 	LocalDateTime updatedAt,
 	Boolean isGroupChat,
+	Boolean isHost,
+	Boolean isConfirmed,
 	City city,
 	LocalDate startDate,
 	LocalDate endDate,
