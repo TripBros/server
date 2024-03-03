@@ -25,6 +25,7 @@ import com.tripbros.server.schedule.domain.Schedule;
 import com.tripbros.server.schedule.dto.CreateScheduleRequestDTO;
 import com.tripbros.server.schedule.dto.EditScheduleRequestDTO;
 import com.tripbros.server.schedule.service.ScheduleService;
+import com.tripbros.server.security.SecurityUser;
 import com.tripbros.server.user.domain.User;
 
 import jakarta.transaction.Transactional;
@@ -83,8 +84,13 @@ public class BoardService {
 		return result;
 	}
 
-	public List<GetBoardResponseDTO> getBoards(User user){
-		List<GetBoardResponseDTO> response = boardRepository.findAllGetDTO(user.getId());
+	public List<GetBoardResponseDTO> getBoards(SecurityUser user){
+		List<GetBoardResponseDTO> response;
+
+		if(user == null)
+			response = boardRepository.findAllGetDTO(null);
+		else
+		 	response = boardRepository.findAllGetDTO(user.getUser().getId());
 
 		log.info("success to get boards");
 		return response;

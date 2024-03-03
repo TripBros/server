@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,8 +68,8 @@ public class BoardController {
 
 	@GetMapping
 	@Operation(summary = "게시글 전체 조회")
-	public ResponseEntity<BaseResponse<List<GetBoardResponseDTO>>> getBoards(@AuthUser SecurityUser user){
-		List<GetBoardResponseDTO> result = boardService.getBoards(user.getUser());
+	public ResponseEntity<BaseResponse<List<GetBoardResponseDTO>>> getBoards(@AuthenticationPrincipal SecurityUser user){
+		List<GetBoardResponseDTO> result = boardService.getBoards(user);
 
 		BaseResponse<List<GetBoardResponseDTO>> response = new BaseResponse<>(true, HttpStatus.OK,
 			BoardResultMessage.GET_BOARD_SUCCESS.getMessage(), result);
@@ -88,7 +89,7 @@ public class BoardController {
 
 	@PostMapping("/hit")
 	@Operation(summary = "게시글 상세 조회")
-	public ResponseEntity<BaseResponse<Object>> updateBoardHit(@AuthUser SecurityUser user, @RequestParam Long boardId){
+	public ResponseEntity<BaseResponse<Object>> updateBoardHit(@RequestParam Long boardId){
 		boardService.updateBoardHit(boardId);
 
 		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
