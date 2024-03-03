@@ -12,9 +12,10 @@ import jakarta.validation.constraints.NotNull;
 
 public record GetBookmarkedPlaceResponseDTO(Country country,
 											City city,
-											Long placeId,
+											String placeId,
 											String placeName,
 											String placeUrl,
+											Float placeRating,
 											String placeImage,
 											LocalDateTime bookmarkedAt){
 
@@ -25,6 +26,7 @@ public record GetBookmarkedPlaceResponseDTO(Country country,
 			place.getPlaceId(),
 			place.getPlaceName(),
 			place.getPlaceUrl(),
+			place.getPlaceRating(),
 			place.getPlaceImage(),
 			place.getBookmarkedAt());
 	}

@@ -9,6 +9,6 @@ import com.tripbros.server.recommend.domain.BookmarkedPlace;
 import com.tripbros.server.user.domain.User;
 
 public interface BookmarkedPlaceRepository extends JpaRepository<BookmarkedPlace, Long> {
-	Optional<BookmarkedPlace> findByUserAndPlaceId(User user, Long placeId);
+	Optional<BookmarkedPlace> findByUserAndPlaceId(User user, String placeId);
 	List<BookmarkedPlace> findByUser(User user);
 }

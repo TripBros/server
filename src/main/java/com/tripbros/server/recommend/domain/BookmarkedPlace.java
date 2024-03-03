@@ -30,21 +30,24 @@ public class BookmarkedPlace {
 	@JoinColumn(name = "locate_id")
 	private Locate locate;
 
-	private Long placeId;
+	private String placeId;
 	private String placeName;
 	private String placeUrl;
+	private Float placeRating;
 	private String placeImage;
 
 	private LocalDateTime bookmarkedAt;
 
 	@Builder
-	public BookmarkedPlace(User user, Locate locate, Long placeId, String placeName, String placeUrl,
+	public BookmarkedPlace(User user, Locate locate, String placeId, String placeName, String placeUrl,
+		Float placeRating,
 		String placeImage, LocalDateTime bookmarkedAt) {
 		this.user = user;
 		this.locate = locate;
 		this.placeId = placeId;
 		this.placeName = placeName;
 		this.placeUrl = placeUrl;
+		this.placeRating = placeRating;
 		this.placeImage = placeImage;
 		this.bookmarkedAt = bookmarkedAt;
 	}

@@ -13,6 +13,7 @@ import com.tripbros.server.board.exception.BoardPermissionException;
 import com.tripbros.server.board.exception.BoardRequestException;
 import com.tripbros.server.chatting.exception.ChatException;
 import com.tripbros.server.common.dto.BaseResponse;
+import com.tripbros.server.recommend.exception.GoogleApiException;
 import com.tripbros.server.schedule.exception.SchedulePermissionException;
 import com.tripbros.server.schedule.exception.ScheduleRequestException;
 import com.tripbros.server.security.UnauthorizedAccessException;
@@ -88,6 +89,12 @@ public class CustomExceptionHandler {
 	public ResponseEntity<BaseResponse<Object>> handler(ChatException e){
 		return ResponseEntity.badRequest()
 			.body(new BaseResponse<>(false, HttpStatus.BAD_REQUEST, e.getMessage(),null));
+	}
+
+	@ExceptionHandler(GoogleApiException.class)
+	public ResponseEntity<BaseResponse<Object>> handler(GoogleApiException e){
+		return ResponseEntity.badRequest()
+			.body(new BaseResponse<>(false, HttpStatus.INTERNAL_SERVER_ERROR, "Google API 호출에 에러가 발생했습니다.", null));
 	}
 
 }

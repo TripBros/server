@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbros.server.common.dto.BaseResponse;
@@ -17,6 +18,7 @@ import com.tripbros.server.enumerate.City;
 import com.tripbros.server.enumerate.Country;
 import com.tripbros.server.recommend.dto.GetBookmarkedPlaceResponseDTO;
 import com.tripbros.server.recommend.dto.GetRecommendedLocateResponseDTO;
+import com.tripbros.server.recommend.dto.GetRecommendedPlacesResponseDTO;
 import com.tripbros.server.recommend.dto.UpdateBookmarkedPlaceRequestDTO;
 import com.tripbros.server.recommend.enumerate.RecommendResultMessage;
 import com.tripbros.server.recommend.service.RecommendService;
@@ -43,6 +45,17 @@ public class RecommendController {
 		List<GetRecommendedLocateResponseDTO> result = recommendService.getAllRecommendLocate();
 		BaseResponse<List<GetRecommendedLocateResponseDTO>> response = new BaseResponse<>(true, HttpStatus.OK,
 			RecommendResultMessage.GET_ALL_RECOMMEND_LOCATES_SUCCESS.getMessage(), result);
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/places")
+	@Operation(summary = "선택한 지역에 대해 모든 추천 맛집을 조회")
+	public ResponseEntity<BaseResponse<List<GetRecommendedPlacesResponseDTO>>> getAllRecommendedPlace(@RequestParam Country country, @RequestParam City city){
+		List<GetRecommendedPlacesResponseDTO> result = recommendService.getAllRecommendedPlace(country, city);
+
+		BaseResponse<List<GetRecommendedPlacesResponseDTO>> response = new BaseResponse<>(true ,HttpStatus.OK,
+			RecommendResultMessage.GET_ALL_RECOMMEND_PLACES_SUCCESS.getMessage(), result);
 
 		return ResponseEntity.ok().body(response);
 	}
