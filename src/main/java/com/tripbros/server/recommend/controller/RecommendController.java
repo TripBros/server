@@ -48,6 +48,21 @@ public class RecommendController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	@GetMapping("/random-one")
+	@Operation(summary = "선택한 분기에 적합한 추천 여행지를 랜덤으로 한 곳 조회")
+	public ResponseEntity<BaseResponse<GetRecommendedLocateResponseDTO>> getRandomRecommendedLocate(@RequestParam Boolean quarter1,
+		@RequestParam Boolean quarter2, @RequestParam Boolean quarter3, @RequestParam Boolean quarter4){
+
+		GetRecommendedLocateResponseDTO result
+			= recommendService.getRandomRecommendedLocate(quarter1, quarter2, quarter3, quarter4);
+
+		BaseResponse<GetRecommendedLocateResponseDTO> response = new BaseResponse<>(true, HttpStatus.OK,
+			RecommendResultMessage.GET_A_RANDOM_RECOMMEND_LOCATE_SUCCESS.getMessage(), result);
+
+		return ResponseEntity.ok().body(response);
+	}
+
+
 	@GetMapping("/places")
 	@Operation(summary = "선택한 지역에 대해 모든 추천 맛집을 조회")
 	public ResponseEntity<BaseResponse<List<GetRecommendedPlacesResponseDTO>>> getAllRecommendedPlace(@RequestParam Country country, @RequestParam City city){

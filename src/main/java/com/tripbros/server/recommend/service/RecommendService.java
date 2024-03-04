@@ -2,7 +2,7 @@ package com.tripbros.server.recommend.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
@@ -50,13 +51,26 @@ public class RecommendService {
 	@Value("${google.api.key}")
 	private String apiKey;
 
-	// 분기 상관 없이 전체 데이터 조회
 	public List<GetRecommendedLocateResponseDTO> getAllRecommendLocate(){
 		List<RecommendedLocate> locates = recommendedLocateRepository.findAll();
 		List<GetRecommendedLocateResponseDTO> result = locates.stream().map(GetRecommendedLocateResponseDTO::toDTO).toList();
 
 		log.info("success to recommend all locates");
 		return result;
+	}
+
+	public GetRecommendedLocateResponseDTO getRandomRecommendedLocate(@RequestParam(name="quarter1") Boolean quarter1,
+		@RequestParam(name="quarter2") Boolean quarter2, @RequestParam(name="quarter3") Boolean quarter3, @RequestParam(name="quarter4") Boolean quarter4){
+
+		List<RecommendedLocate> locates
+			= recommendedLocateRepository.findByQuarter1FlagAndQuarter2FlagAndQuarter3FlagAndQuarter4Flag(
+				quarter1, quarter2, quarter3, quarter4);
+		Collections.shuffle(locates);
+
+		List<GetRecommendedLocateResponseDTO> result = locates.stream()
+			.map(GetRecommendedLocateResponseDTO::toDTO).toList();
+
+		return result.get(0);
 	}
 
 	public List<GetRecommendedPlacesResponseDTO> getAllRecommendedPlace(Country country, City city){
@@ -114,7 +128,7 @@ public class RecommendService {
 			throw new GoogleApiException();
 		}
 	}
-	// 맛집 데이터 북마크
+
 	public String updateBookmarkPlace(User user, UpdateBookmarkedPlaceRequestDTO requestDTO){
 		Optional<BookmarkedPlace> target = bookmarkedPlaceRepository.findByUserAndPlaceId(user,
 			requestDTO.placeId());
@@ -147,7 +161,6 @@ public class RecommendService {
 
 	}
 
-	// 북마크 한 맛집 데이터 조회
 	public List<GetBookmarkedPlaceResponseDTO> getBookmarkedPlace(User user){
 		List<BookmarkedPlace> bookmarked = bookmarkedPlaceRepository.findByUser(user);
 		List<GetBookmarkedPlaceResponseDTO> result = bookmarked.stream()
