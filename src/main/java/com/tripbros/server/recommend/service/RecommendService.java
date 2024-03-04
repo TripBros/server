@@ -6,7 +6,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -74,8 +76,6 @@ public class RecommendService {
 	}
 
 	public List<GetRecommendedPlacesResponseDTO> getAllRecommendedPlace(Country country, City city){
-		List<GetRecommendedPlacesResponseDTO> result = new ArrayList<>();
-
 		String searchKeyword = country.toString().concat(" ").concat(city.toString()).concat(" 맛집");
 
 		GeoApiContext context = new GeoApiContext.Builder()
@@ -85,19 +85,23 @@ public class RecommendService {
 		try{
 			PlacesSearchResponse response = PlacesApi.textSearchQuery(context, searchKeyword).await();
 
-			if(response.results != null && response.results.length > 0){
-				for(PlacesSearchResult res : response.results){
-					GetRecommendedPlacesResponseDTO place = getPlaceDetails(res.placeId);
-					if(place != null) result.add(place);
-				}
+			if (response.results != null && response.results.length > 0) {
+				List<CompletableFuture<GetRecommendedPlacesResponseDTO>> results = new ArrayList<>();
+				for(PlacesSearchResult res : response.results)
+					results.add(CompletableFuture.supplyAsync(() -> getPlaceDetails(res.placeId)));
+
+				CompletableFuture.allOf(results.toArray(new CompletableFuture[0])).join(); // 비동기 작업이 모두 끝날 때까지 대기
+
+				return results.stream().map(CompletableFuture::join).filter(Objects::nonNull).toList();
 			}
-			else log.info("No place found : "+searchKeyword);
+			else{
+				log.info("No place found : "+searchKeyword);
+				return null;
+			}
 		}
 		catch (Exception e){
 			throw new GoogleApiException();
 		}
-
-		return result;
 	}
 
 	private GetRecommendedPlacesResponseDTO getPlaceDetails(String placeId){
