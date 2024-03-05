@@ -19,6 +19,7 @@ import com.tripbros.server.board.dto.CreateBoardRequestDTO;
 import com.tripbros.server.board.dto.EditBoardRequestDTO;
 import com.tripbros.server.board.dto.GetBoardResponseDTO;
 import com.tripbros.server.board.dto.GetBookmarkedBoardResponseDTO;
+import com.tripbros.server.board.dto.ReportBoardRequestDTO;
 import com.tripbros.server.board.enumerate.BoardResultMessage;
 import com.tripbros.server.board.exception.BoardRequestException;
 import com.tripbros.server.board.service.BoardService;
@@ -157,6 +158,20 @@ public class BoardController {
 
 		BaseResponse<List<GetBookmarkedBoardResponseDTO>> response = new BaseResponse<>(true, HttpStatus.OK,
 			BoardResultMessage.GET_BOOKMARKED_BOARD_SUCCESS.getMessage(), result);
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	@PostMapping("/report")
+	@Operation(summary = "게시글 신고")
+	public ResponseEntity<BaseResponse<Object>> reportBoard(@AuthUser SecurityUser user, @RequestBody @Valid ReportBoardRequestDTO requestDTO, Errors errors){
+		if(errors.hasErrors())
+			throw new BoardRequestException(errors);
+
+		boardService.reportBoard(user.getUser(), requestDTO);
+
+		BaseResponse<Object> response = new BaseResponse<>(true, HttpStatus.OK,
+			BoardResultMessage.REPORT_BOARD_SUCCESS.getMessage(), null);
 
 		return ResponseEntity.ok().body(response);
 	}

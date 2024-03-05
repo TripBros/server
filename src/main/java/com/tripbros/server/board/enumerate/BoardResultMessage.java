@@ -8,7 +8,8 @@ public enum BoardResultMessage {
 	DELETE_BOARD_SUCCESS("게시글 삭제 성공"),
 	UPDATE_DEADLINE_REACH("게시글 마감 상태 반영 성공"),
 	UPDATE_BOOKMARK_BOARD_SUCCESS("게시글 북마크 반영 성공"),
-	GET_BOOKMARKED_BOARD_SUCCESS("북마크 게시글 조회 성공");
+	GET_BOOKMARKED_BOARD_SUCCESS("북마크 게시글 조회 성공"),
+	REPORT_BOARD_SUCCESS("게시글 신고 성공");
 
 	private final String message;
 

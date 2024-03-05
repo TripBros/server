@@ -11,14 +11,17 @@ import org.springframework.stereotype.Service;
 import com.tripbros.server.board.domain.Board;
 import com.tripbros.server.board.domain.BookmarkedBoard;
 import com.tripbros.server.board.domain.PreferAgeRange;
+import com.tripbros.server.board.domain.ReportedBoard;
 import com.tripbros.server.board.dto.CreateBoardRequestDTO;
 import com.tripbros.server.board.dto.EditBoardRequestDTO;
 import com.tripbros.server.board.dto.GetBoardResponseDTO;
 import com.tripbros.server.board.dto.GetBookmarkedBoardResponseDTO;
+import com.tripbros.server.board.dto.ReportBoardRequestDTO;
 import com.tripbros.server.board.exception.BoardPermissionException;
 import com.tripbros.server.board.repository.BoardRepository;
 import com.tripbros.server.board.repository.BookmarkedBoardRepository;
 import com.tripbros.server.board.repository.PreferAgeRangeRepository;
+import com.tripbros.server.board.repository.ReportedBoardRepository;
 import com.tripbros.server.common.exception.UserPermissionException;
 import com.tripbros.server.enumerate.City;
 import com.tripbros.server.schedule.domain.Schedule;
@@ -40,6 +43,7 @@ public class BoardService {
 
 	private final BoardRepository boardRepository;
 	private final BookmarkedBoardRepository bookmarkedBoardRepository;
+	private final ReportedBoardRepository reportedBoardRepository;
 	private final PreferAgeRangeRepository preferAgeRangeRepository;
 
 	private final ScheduleService scheduleService;
@@ -181,6 +185,17 @@ public class BoardService {
 		List<GetBookmarkedBoardResponseDTO> result = bookmarkedBoardRepository.findByUser(user.getId());
 		log.info("success to get bookmarked boards");
 		return result;
+	}
+
+	public void reportBoard(User user, ReportBoardRequestDTO requestDTO){
+		Board target = boardRepository.findById(requestDTO.boardId()).orElseThrow(
+			() -> new BoardPermissionException("유효하지 않은 게시글 입니다.")
+		);
+
+		ReportedBoard reportedBoard = requestDTO.toEntity(user, target);
+		reportedBoardRepository.save(reportedBoard);
+
+		log.info("success to report board");
 	}
 
 	@Scheduled(cron = "0 0 0 * * ?")
