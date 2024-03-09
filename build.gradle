@@ -61,6 +61,10 @@ dependencies {
 	// Google Maps
 	implementation 'com.google.maps:google-maps-services:0.15.0'
 
+	//webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	//json-simple
+	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 }
 
 tasks.named('test') {

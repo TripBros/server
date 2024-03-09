@@ -24,7 +24,7 @@ public record CreateScheduleRequestDTO(@NotBlank(message = "일정 제목은 필
 									   String memo
 						  ){
 
-	public Schedule toEntity(User user, LocateRepository locateRepository){
+	public Schedule toEntity(User user, String locateImage, LocateRepository locateRepository){
 		Locate locate = locateRepository.findByCountryAndCity(country, city)
 			.orElseThrow(() -> new SchedulePermissionException("존재하지 않는 국가/도시 조합입니다."));
 
@@ -32,6 +32,7 @@ public record CreateScheduleRequestDTO(@NotBlank(message = "일정 제목은 필
 			.user(user)
 			.title(title)
 			.locate(locate)
+			.locateImage(locateImage)
 			.placeId(placeId)
 			.placeName(placeName)
 			.placeUrl(placeUrl)

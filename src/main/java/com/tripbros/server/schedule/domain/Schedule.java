@@ -33,6 +33,7 @@ public class Schedule {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "locate_id")
 	private Locate locate;
+	private String locateImage;
 
 	private String placeName;
 	private Long placeId;
@@ -52,10 +53,11 @@ public class Schedule {
 	private String memo;
 
 	@Builder
-	public Schedule(User user, Locate locate, String placeName, Long placeId, String placeUrl, String title,
+	public Schedule(User user, Locate locate, String locateImage, String placeName, Long placeId, String placeUrl, String title,
 		LocalDate startDate, LocalDate endDate, boolean hostFlag, Schedule host, String memo) {
 		this.user = user;
 		this.locate = locate;
+		this.locateImage = locateImage;
 		this.placeName = placeName;
 		this.placeId = placeId;
 		this.placeUrl = placeUrl;
@@ -67,9 +69,10 @@ public class Schedule {
 		this.memo = memo;
 	}
 
-	public Schedule editSchedule(EditScheduleRequestDTO requestDTO, Locate locate){
+	public Schedule editSchedule(EditScheduleRequestDTO requestDTO, Locate locate, String locateImage){
 		this.title = requestDTO.title();
 		this.locate = locate;
+		this.locateImage = locateImage;
 		this.startDate = requestDTO.startDate();
 		this.endDate = requestDTO.endDate();
 		this.memo = requestDTO.memo();
