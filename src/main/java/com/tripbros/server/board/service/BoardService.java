@@ -74,7 +74,8 @@ public class BoardService {
 			editBoardRequestDTO.city(),
 			editBoardRequestDTO.placeId(),
 			editBoardRequestDTO.placeName(),
-			editBoardRequestDTO.placeUrl(),
+			editBoardRequestDTO.placeLatitude(),
+			editBoardRequestDTO.placeLongitude(),
 			editBoardRequestDTO.startDate(),
 			editBoardRequestDTO.endDate(),
 			null);
@@ -217,7 +218,8 @@ public class BoardService {
 			createBoardRequestDTO.city(),
 			createBoardRequestDTO.placeId(),
 			createBoardRequestDTO.placeName(),
-			createBoardRequestDTO.placeUrl(),
+			createBoardRequestDTO.placeLatitude(),
+			createBoardRequestDTO.placeLongitude(),
 			createBoardRequestDTO.startDate(),
 			createBoardRequestDTO.endDate(),
 			null);
