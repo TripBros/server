@@ -53,14 +53,6 @@ public class RecommendService {
 	@Value("${google.api.key}")
 	private String apiKey;
 
-	public List<GetRecommendedLocateResponseDTO> getAllRecommendLocate(){
-		List<RecommendedLocate> locates = recommendedLocateRepository.findAll();
-		List<GetRecommendedLocateResponseDTO> result = locates.stream().map(GetRecommendedLocateResponseDTO::toDTO).toList();
-
-		log.info("success to recommend all locates");
-		return result;
-	}
-
 	public GetRecommendedLocateResponseDTO getRandomRecommendedLocate(@RequestParam(name="quarter1") Boolean quarter1,
 		@RequestParam(name="quarter2") Boolean quarter2, @RequestParam(name="quarter3") Boolean quarter3, @RequestParam(name="quarter4") Boolean quarter4){
 
