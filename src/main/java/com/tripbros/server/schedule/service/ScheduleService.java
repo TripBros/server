@@ -4,21 +4,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.tripbros.server.board.domain.Board;
 import com.tripbros.server.chatting.service.ChattingService;
 import com.tripbros.server.common.exception.UserPermissionException;
-import com.tripbros.server.enumerate.City;
-import com.tripbros.server.enumerate.Country;
 import com.tripbros.server.recommend.domain.Locate;
 import com.tripbros.server.recommend.repository.LocateRepository;
+import com.tripbros.server.recommend.util.LocateUtil;
 import com.tripbros.server.schedule.domain.Schedule;
 import com.tripbros.server.schedule.dto.CreateScheduleRequestDTO;
 import com.tripbros.server.schedule.dto.EditScheduleRequestDTO;
@@ -42,11 +35,8 @@ public class ScheduleService {
 	private final ChattingService chattingService;
 	private final EditRequestService editRequestService;
 
-	@Value("${pixabay.api.key}")
-	private String apiKey;
-
 	public Schedule createSchedule(User user, CreateScheduleRequestDTO createScheduleRequestDTO){
-		String imageUrl = getLocateImage(createScheduleRequestDTO.country(), createScheduleRequestDTO.city());
+		String imageUrl = LocateUtil.getLocateImage(createScheduleRequestDTO.country(), createScheduleRequestDTO.city());
 
 		Schedule schedule = createScheduleRequestDTO.toEntity(user, imageUrl, locateRepository);
 		scheduleRepository.save(schedule);
@@ -68,7 +58,7 @@ public class ScheduleService {
 
 		Locate modifiedLocate = locateRepository.findByCountryAndCity(editScheduleRequestDTO.country(),
 			editScheduleRequestDTO.city()).orElseThrow(() -> new SchedulePermissionException("존재하지 않는 국가/도시 조합입니다."));
-		String imageUrl = getLocateImage(editScheduleRequestDTO.country(), editScheduleRequestDTO.city());
+		String imageUrl = LocateUtil.getLocateImage(editScheduleRequestDTO.country(), editScheduleRequestDTO.city());
 
 		Schedule result = target.get().editSchedule(editScheduleRequestDTO, modifiedLocate, imageUrl);
 		if (scheduleRepository.existsByHost(schedule)) { //동행 일정인 경우
@@ -131,37 +121,5 @@ public class ScheduleService {
 			.filter(u -> !u.getId().equals(hostUser.getId()))
 			.findFirst()
 			.orElseThrow(() -> new IllegalStateException("오류가 발생했습니다 : Host User Not Found"));
-	}
-
-	private String getLocateImage(Country country, City city) {
-		String url = "https://pixabay.com/api/";
-		String searchKeyword = country.toString().concat(" ").concat(city.toString());
-
-		WebClient webClient = WebClient.create(url);
-		String response = webClient.get()
-			.uri(uriBuilder -> uriBuilder
-				.queryParam("key", apiKey)
-				.queryParam("q", searchKeyword)
-				.queryParam("lang","ko")
-				.build())
-			.retrieve()
-			.bodyToMono(String.class)
-			.block();
-
-		return parseResponseToImageUrl(response);
-	}
-
-	private String parseResponseToImageUrl(String response) {
-		JSONParser parser = new JSONParser();
-		JSONObject object;
-		try {
-			object = (JSONObject)parser.parse(response);
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
-
-		JSONArray hits = (JSONArray)object.get("hits");
-		JSONObject hitBody = (JSONObject)hits.get(0);
-		return (String)hitBody.get("largeImageURL");
 	}
 }
