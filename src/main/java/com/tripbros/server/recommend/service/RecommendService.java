@@ -34,6 +34,7 @@ import com.tripbros.server.recommend.exception.GoogleApiException;
 import com.tripbros.server.recommend.repository.BookmarkedPlaceRepository;
 import com.tripbros.server.recommend.repository.LocateRepository;
 import com.tripbros.server.recommend.repository.RecommendedLocateRepository;
+import com.tripbros.server.recommend.util.LocateUtil;
 import com.tripbros.server.user.domain.User;
 
 import jakarta.transaction.Transactional;
@@ -61,10 +62,13 @@ public class RecommendService {
 				quarter1, quarter2, quarter3, quarter4);
 		Collections.shuffle(locates);
 
-		List<GetRecommendedLocateResponseDTO> result = locates.stream()
-			.map(GetRecommendedLocateResponseDTO::toDTO).toList();
+		RecommendedLocate randomLocate = locates.get(0);
 
-		return result.get(0);
+		String image = LocateUtil.getLocateImage(
+			randomLocate.getLocate().getCountry(),
+			randomLocate.getLocate().getCity());
+
+		return GetRecommendedLocateResponseDTO.toDTO(randomLocate, image);
 	}
 
 	public List<GetRecommendedPlacesResponseDTO> getAllRecommendedPlace(Country country, City city){

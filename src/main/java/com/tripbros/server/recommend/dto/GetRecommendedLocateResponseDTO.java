@@ -13,12 +13,12 @@ public record GetRecommendedLocateResponseDTO(Long id,
 											  Boolean quarter3,
 											  Boolean quarter4) {
 
-	public static GetRecommendedLocateResponseDTO toDTO(RecommendedLocate recommendedLocate){
+	public static GetRecommendedLocateResponseDTO toDTO(RecommendedLocate recommendedLocate, String image){
 		return new GetRecommendedLocateResponseDTO(
 			recommendedLocate.getId(),
 			recommendedLocate.getLocate().getCountry(),
 			recommendedLocate.getLocate().getCity(),
-			recommendedLocate.getImage(),
+			image,
 			recommendedLocate.isQuarter1Flag(),
 			recommendedLocate.isQuarter2Flag(),
 			recommendedLocate.isQuarter3Flag(),
