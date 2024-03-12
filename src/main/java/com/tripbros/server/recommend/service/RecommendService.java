@@ -52,7 +52,10 @@ public class RecommendService {
 	private final LocateRepository locateRepository;
 
 	@Value("${google.api.key}")
-	private String apiKey;
+	private String googleApiKey;
+
+	@Value("${pixabay.api.key}")
+	private String pixabayApiKey;
 
 	public GetRecommendedLocateResponseDTO getRandomRecommendedLocate(@RequestParam(name="quarter1") Boolean quarter1,
 		@RequestParam(name="quarter2") Boolean quarter2, @RequestParam(name="quarter3") Boolean quarter3, @RequestParam(name="quarter4") Boolean quarter4){
@@ -64,6 +67,7 @@ public class RecommendService {
 
 		RecommendedLocate randomLocate = locates.get(0);
 
+		LocateUtil.setApiKey(pixabayApiKey);
 		String image = LocateUtil.getLocateImage(
 			randomLocate.getLocate().getCountry(),
 			randomLocate.getLocate().getCity());
@@ -75,7 +79,7 @@ public class RecommendService {
 		String searchKeyword = country.toString().concat(" ").concat(city.toString()).concat(" 맛집");
 
 		GeoApiContext context = new GeoApiContext.Builder()
-			.apiKey(apiKey)
+			.apiKey(googleApiKey)
 			.build();
 
 		try{
@@ -102,7 +106,7 @@ public class RecommendService {
 
 	private GetRecommendedPlacesResponseDTO getPlaceDetails(String placeId){
 		GeoApiContext context = new GeoApiContext.Builder()
-			.apiKey(apiKey)
+			.apiKey(googleApiKey)
 			.build();
 		String photoUrl;
 
@@ -114,7 +118,7 @@ public class RecommendService {
 				photoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&photoreference="
 					.concat(details.photos[1].photoReference)
 					.concat("&key=")
-					.concat(apiKey);
+					.concat(googleApiKey);
 			}
 
 			return new GetRecommendedPlacesResponseDTO(

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.tripbros.server.board.domain.Board;
@@ -35,7 +36,11 @@ public class ScheduleService {
 	private final ChattingService chattingService;
 	private final EditRequestService editRequestService;
 
+	@Value("${pixabay.api.key}")
+	private String pixabayApiKey;
+
 	public Schedule createSchedule(User user, CreateScheduleRequestDTO createScheduleRequestDTO){
+		LocateUtil.setApiKey(pixabayApiKey);
 		String imageUrl = LocateUtil.getLocateImage(createScheduleRequestDTO.country(), createScheduleRequestDTO.city());
 
 		Schedule schedule = createScheduleRequestDTO.toEntity(user, imageUrl, locateRepository);
@@ -58,6 +63,7 @@ public class ScheduleService {
 
 		Locate modifiedLocate = locateRepository.findByCountryAndCity(editScheduleRequestDTO.country(),
 			editScheduleRequestDTO.city()).orElseThrow(() -> new SchedulePermissionException("존재하지 않는 국가/도시 조합입니다."));
+		LocateUtil.setApiKey(pixabayApiKey);
 		String imageUrl = LocateUtil.getLocateImage(editScheduleRequestDTO.country(), editScheduleRequestDTO.city());
 
 		Schedule result = target.get().editSchedule(editScheduleRequestDTO, modifiedLocate, imageUrl);

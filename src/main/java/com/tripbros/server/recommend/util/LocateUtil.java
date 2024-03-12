@@ -11,8 +11,12 @@ import com.tripbros.server.enumerate.City;
 import com.tripbros.server.enumerate.Country;
 
 public class LocateUtil {
-	@Value("${pixabay.api.key}")
 	private static String apiKey;
+
+	@Value("${pixabay.api.key}")
+	public static void setApiKey(String key) {
+		apiKey = key;
+	}
 
 	public static String getLocateImage(Country country, City city) {
 		String url = "https://pixabay.com/api/";
@@ -21,9 +25,9 @@ public class LocateUtil {
 		WebClient webClient = WebClient.create(url);
 		String response = webClient.get()
 			.uri(uriBuilder -> uriBuilder
-				.queryParam("key", apiKey)
 				.queryParam("q", searchKeyword)
 				.queryParam("lang","ko")
+				.queryParam("key", apiKey)
 				.build())
 			.retrieve()
 			.bodyToMono(String.class)
