@@ -1,7 +1,11 @@
 package com.tripbros.server.user.service;
 
 import com.tripbros.server.security.*;
+
+import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -29,6 +33,11 @@ public class UserService {
 
 		Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
 
-		return tokenProvider.createToken(authentication);
+		return tokenProvider.createTokens(authentication);
+	}
+
+	// access token 만료로 인해 refresh token으로 재발급 요청하는 API
+	public String requestNewAccessToken(String accessToken, String refreshToken){
+		return tokenProvider.validateRefreshToken(accessToken, refreshToken);
 	}
 }

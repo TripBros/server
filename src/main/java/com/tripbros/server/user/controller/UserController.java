@@ -112,4 +112,15 @@ public class UserController {
 	public ResponseEntity<BaseResponse<String>> getUserNickname(@AuthUser SecurityUser user) {
 		return ResponseEntity.ok(new BaseResponse<>(true, HttpStatus.OK, "성공", user.getUser().getNickname()));
 	}
+
+	@GetMapping("/refresh")
+	@Operation(summary = "access 토큰 재발급 요청 API")
+	public ResponseEntity<BaseResponse<String>> refreshToken(@RequestParam String accessToken, @RequestParam String refreshToken){
+		String result = userService.requestNewAccessToken(accessToken, refreshToken);
+
+		if(result.equals(HttpStatus.UNAUTHORIZED.toString())) // refresh token이 만료된 경우
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new BaseResponse<>(false, HttpStatus.UNAUTHORIZED, "만료된 refresh token", "재로그인을 요청해주세요."));
+		else// refresh 토큰 사용해서 정상 재발급 된 경우
+			return ResponseEntity.ok(new BaseResponse<>(true, HttpStatus.OK, "Access token 재발급 성공", result));
+	}
 }

@@ -5,6 +5,7 @@ import lombok.Builder;
 @Builder
 public record JwtDTO(
 	String grantType,
-	String accessToken
+	String accessToken,
+	String refreshToken
 ) {
 }
