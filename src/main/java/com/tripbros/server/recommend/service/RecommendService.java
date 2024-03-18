@@ -67,8 +67,8 @@ public class RecommendService {
 
 		RecommendedLocate randomLocate = locates.get(0);
 
-		LocateUtil.setApiKey(pixabayApiKey);
 		String image = LocateUtil.getLocateImage(
+			pixabayApiKey,
 			randomLocate.getLocate().getCountry(),
 			randomLocate.getLocate().getCity());
 

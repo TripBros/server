@@ -5,20 +5,15 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.tripbros.server.enumerate.City;
 import com.tripbros.server.enumerate.Country;
 
+@Component
 public class LocateUtil {
-	private static String apiKey;
-
-	@Value("${pixabay.api.key}")
-	public static void setApiKey(String key) {
-		apiKey = key;
-	}
-
-	public static String getLocateImage(Country country, City city) {
+	public static String getLocateImage(String apiKey,Country country, City city) {
 		String url = "https://pixabay.com/api/";
 		String searchKeyword = country.toString().concat(" ").concat(city.toString());
 

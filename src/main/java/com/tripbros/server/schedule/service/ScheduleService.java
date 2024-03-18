@@ -40,8 +40,7 @@ public class ScheduleService {
 	private String pixabayApiKey;
 
 	public Schedule createSchedule(User user, CreateScheduleRequestDTO createScheduleRequestDTO){
-		LocateUtil.setApiKey(pixabayApiKey);
-		String imageUrl = LocateUtil.getLocateImage(createScheduleRequestDTO.country(), createScheduleRequestDTO.city());
+		String imageUrl = LocateUtil.getLocateImage(pixabayApiKey, createScheduleRequestDTO.country(), createScheduleRequestDTO.city());
 
 		Schedule schedule = createScheduleRequestDTO.toEntity(user, imageUrl, locateRepository);
 		scheduleRepository.save(schedule);
@@ -63,8 +62,7 @@ public class ScheduleService {
 
 		Locate modifiedLocate = locateRepository.findByCountryAndCity(editScheduleRequestDTO.country(),
 			editScheduleRequestDTO.city()).orElseThrow(() -> new SchedulePermissionException("존재하지 않는 국가/도시 조합입니다."));
-		LocateUtil.setApiKey(pixabayApiKey);
-		String imageUrl = LocateUtil.getLocateImage(editScheduleRequestDTO.country(), editScheduleRequestDTO.city());
+		String imageUrl = LocateUtil.getLocateImage(pixabayApiKey, editScheduleRequestDTO.country(), editScheduleRequestDTO.city());
 
 		Schedule result = target.get().editSchedule(editScheduleRequestDTO, modifiedLocate, imageUrl);
 		if (scheduleRepository.existsByHost(schedule)) { //동행 일정인 경우
