@@ -12,7 +12,6 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
@@ -57,14 +56,20 @@ public class RecommendService {
 	@Value("${pixabay.api.key}")
 	private String pixabayApiKey;
 
-	public GetRecommendedLocateResponseDTO getRandomRecommendedLocate(@RequestParam(name="quarter1") Boolean quarter1,
-		@RequestParam(name="quarter2") Boolean quarter2, @RequestParam(name="quarter3") Boolean quarter3, @RequestParam(name="quarter4") Boolean quarter4){
+	public GetRecommendedLocateResponseDTO getRandomRecommendedLocate(Integer quarter){
+		List<RecommendedLocate> locates;
 
-		List<RecommendedLocate> locates
-			= recommendedLocateRepository.findByQuarter1FlagAndQuarter2FlagAndQuarter3FlagAndQuarter4Flag(
-				quarter1, quarter2, quarter3, quarter4);
+		if(quarter == 1)
+			locates = recommendedLocateRepository.findAllByQuarter1FlagTrue();
+		else if (quarter == 2)
+			locates = recommendedLocateRepository.findAllByQuarter2FlagTrue();
+		else if (quarter == 3)
+			locates = recommendedLocateRepository.findAllByQuarter3FlagTrue();
+		else if (quarter == 4)
+			locates = recommendedLocateRepository.findAllByQuarter4FlagTrue();
+		else throw new RuntimeException("잘못 된 분기 선택입니다. (1,2,3,4 중 선택 가능) ");
+
 		Collections.shuffle(locates);
-
 		RecommendedLocate randomLocate = locates.get(0);
 
 		String image = LocateUtil.getLocateImage(
