@@ -23,6 +23,7 @@ import com.tripbros.server.security.SecurityUser;
 import com.tripbros.server.user.dto.EditUserInfoRequest;
 import com.tripbros.server.user.dto.RegisterRequest;
 import com.tripbros.server.user.dto.SignInRequest;
+import com.tripbros.server.user.dto.UserInfoResponse;
 import com.tripbros.server.user.enumerate.UserResultMessage;
 import com.tripbros.server.user.service.UserRegisterService;
 import com.tripbros.server.user.service.UserService;
