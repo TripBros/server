@@ -96,7 +96,8 @@ public class UserRegisterService {
 	}
 
 	public UserInfoResponse getUserInfoWithoutPassword(User user) {
-		return UserInfoResponse.from(user);
+		User result = userRepository.findByIdWithTravelStyle(user.getId());
+		return UserInfoResponse.from(result);
 	}
 
 
