@@ -36,8 +36,9 @@ public class Schedule {
 	private String locateImage;
 
 	private String placeName;
-	private Long placeId;
-	private String placeUrl;
+	private String placeId;
+	private Double placeLatitude;
+	private Double placeLongitude;
 
 	private String title;
 	private LocalDate startDate;
@@ -53,14 +54,15 @@ public class Schedule {
 	private String memo;
 
 	@Builder
-	public Schedule(User user, Locate locate, String locateImage, String placeName, Long placeId, String placeUrl, String title,
+	public Schedule(User user, Locate locate, String locateImage, String placeName, String placeId, Double placeLatitude, Double placeLongitude, String title,
 		LocalDate startDate, LocalDate endDate, boolean hostFlag, Schedule host, String memo) {
 		this.user = user;
 		this.locate = locate;
 		this.locateImage = locateImage;
 		this.placeName = placeName;
 		this.placeId = placeId;
-		this.placeUrl = placeUrl;
+		this.placeLatitude = placeLatitude;
+		this.placeLongitude = placeLongitude;
 		this.title = title;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -78,7 +80,8 @@ public class Schedule {
 		this.memo = requestDTO.memo();
 		this.placeId = requestDTO.placeId();
 		this.placeName = requestDTO.placeName();
-		this.placeUrl = requestDTO.placeUrl();
+		this.placeLatitude = requestDTO.placeLatitude();
+		this.placeLongitude = requestDTO.placeLongitude();
 		return this;
 	}
 
@@ -89,7 +92,8 @@ public class Schedule {
 		this.endDate = schedule.getEndDate();
 		this.placeId = schedule.getPlaceId();
 		this.placeName = schedule.getPlaceName();
-		this.placeUrl = schedule.getPlaceUrl();
+		this.placeLatitude = schedule.getPlaceLatitude();
+		this.placeLongitude = schedule.getPlaceLongitude();
 	}
 
 	public Schedule setHost(Schedule host){
@@ -108,7 +112,8 @@ public class Schedule {
 			.locate(hostSchedule.getLocate())
 			.placeName(hostSchedule.getPlaceName())
 			.placeId(hostSchedule.getPlaceId())
-			.placeUrl(hostSchedule.getPlaceUrl())
+			.placeLatitude(hostSchedule.getPlaceLatitude())
+			.placeLongitude(hostSchedule.getPlaceLongitude())
 			.title(hostSchedule.getTitle())
 			.startDate(hostSchedule.getStartDate())
 			.endDate(hostSchedule.getEndDate())

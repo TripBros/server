@@ -26,7 +26,8 @@ public record EditBoardRequestDTO(Long id,
 								  @NotNull(message = "동행 선호 나이대는 필수 선택입니다.") Boolean sixtiesAboveFlag,
 								  @NotNull(message = "동행 선호 나이대는 필수 선택입니다.") Boolean unrelatedFlag,
 								  @NotNull(message = "동행 선호 성별은 필수 선택입니다.") Sex preferSex,
-								  Long placeId,
+								  String placeId,
 								  String placeName,
-								  String placeUrl){
+								  Double placeLatitude,
+								  Double placeLongitude){
 }

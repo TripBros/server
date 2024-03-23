@@ -17,7 +17,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 		+ "CASE WHEN bookmark.id IS NULL OR :userId IS NULL THEN false ELSE true END, "
 		+ "b.user.age, b.user.sex, b.title, b.content, b.purpose, b.schedule.locate.country, b.schedule.locate.city, "
 		+ "b.bookmarkedCount, b.preferSex, b.schedule.startDate, b.schedule.endDate, b.requiredHeadCount, "
-		+ "b.nowHeadCount, b.schedule.placeId, b.schedule.placeName, b.schedule.placeUrl, b.chatCount, b.createdAt, b.preferAgeRange) "
+		+ "b.nowHeadCount, b.schedule.placeId, b.schedule.placeName, b.schedule.placeLatitude, b.schedule.placeLongitude, b.chatCount, b.createdAt, b.preferAgeRange) "
 		+ "FROM Board b "
 		+ "LEFT OUTER JOIN FETCH BookmarkedBoard bookmark "
 		+ "ON (bookmark.board.id = b.id AND bookmark.user.id = :userId) ")
@@ -28,7 +28,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 		+ "CASE WHEN bookmark.id IS NULL THEN false ELSE true END, "
 		+ "b.user.age, b.user.sex, b.title, b.content, b.purpose, b.schedule.locate.country, b.schedule.locate.city, "
 		+ "b.bookmarkedCount, b.preferSex, b.schedule.startDate, b.schedule.endDate, b.requiredHeadCount, "
-		+ "b.nowHeadCount, b.schedule.placeId, b.schedule.placeName, b.schedule.placeUrl, b.chatCount, b.createdAt, b.preferAgeRange) "
+		+ "b.nowHeadCount, b.schedule.placeId, b.schedule.placeName, b.schedule.placeLatitude, b.schedule.placeLongitude, b.chatCount, b.createdAt, b.preferAgeRange) "
 		+ "FROM Board b "
 		+ "LEFT OUTER JOIN FETCH BookmarkedBoard bookmark "
 		+ "ON (bookmark.board.id = b.id AND bookmark.user.id = :userId) "

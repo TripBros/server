@@ -38,16 +38,6 @@ import lombok.RequiredArgsConstructor;
 public class RecommendController {
 	private final RecommendService recommendService;
 
-	@GetMapping
-	@Operation(summary = "분기 상관 없이 모든 추천 여행지를 조회")
-	public ResponseEntity<BaseResponse<List<GetRecommendedLocateResponseDTO>>> getAllRecommendedLocate() {
-		List<GetRecommendedLocateResponseDTO> result = recommendService.getAllRecommendLocate();
-		BaseResponse<List<GetRecommendedLocateResponseDTO>> response = new BaseResponse<>(true, HttpStatus.OK,
-			RecommendResultMessage.GET_ALL_RECOMMEND_LOCATES_SUCCESS.getMessage(), result);
-
-		return ResponseEntity.ok().body(response);
-	}
-
 	@GetMapping("/random-one")
 	@Operation(summary = "선택한 분기에 적합한 추천 여행지를 랜덤으로 한 곳 조회")
 	public ResponseEntity<BaseResponse<GetRecommendedLocateResponseDTO>> getRandomRecommendedLocate(@RequestParam Boolean quarter1,

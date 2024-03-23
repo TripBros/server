@@ -35,16 +35,17 @@ public class GetBookmarkedBoardResponseDTO {
 	private LocalDate endDate;
 	private Integer requiredHeadCount;
 	private Integer nowHeadCount;
-	private Long placeId;
+	private String placeId;
 	private String placeName;
-	private String placeUrl;
+	private Double placeLatitude;
+	private Double placeLongitude;
 	private Integer chatCount;
 	private LocalDateTime createdAt;
 
 	public GetBookmarkedBoardResponseDTO(Long id, String nickname, String profileImage, Long hit, Integer age,
 		Sex sex, String title, String content, Purpose purpose, Country country, City city, Long bookmarkedCount,
 		Sex preferSex, LocalDate startDate, LocalDate endDate, Integer requiredHeadCount, Integer nowHeadCount,
-		Long placeId, String placeName, String placeUrl, Integer chatCount, LocalDateTime createdAt,
+		String placeId, String placeName, Double placeLatitude, Double placeLongitude, Integer chatCount, LocalDateTime createdAt,
 		PreferAgeRange preferAgeRange) {
 		this.id = id;
 		this.nickname = nickname;
@@ -65,7 +66,8 @@ public class GetBookmarkedBoardResponseDTO {
 		this.nowHeadCount = nowHeadCount;
 		this.placeId = placeId;
 		this.placeName = placeName;
-		this.placeUrl = placeUrl;
+		this.placeLatitude = placeLatitude;
+		this.placeLongitude = placeLongitude;
 		this.chatCount = chatCount;
 		this.createdAt = createdAt;
 		this.preferAgeRange = preferAgeRange;

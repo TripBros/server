@@ -34,6 +34,7 @@ import com.tripbros.server.recommend.exception.GoogleApiException;
 import com.tripbros.server.recommend.repository.BookmarkedPlaceRepository;
 import com.tripbros.server.recommend.repository.LocateRepository;
 import com.tripbros.server.recommend.repository.RecommendedLocateRepository;
+import com.tripbros.server.recommend.util.LocateUtil;
 import com.tripbros.server.user.domain.User;
 
 import jakarta.transaction.Transactional;
@@ -51,15 +52,10 @@ public class RecommendService {
 	private final LocateRepository locateRepository;
 
 	@Value("${google.api.key}")
-	private String apiKey;
+	private String googleApiKey;
 
-	public List<GetRecommendedLocateResponseDTO> getAllRecommendLocate(){
-		List<RecommendedLocate> locates = recommendedLocateRepository.findAll();
-		List<GetRecommendedLocateResponseDTO> result = locates.stream().map(GetRecommendedLocateResponseDTO::toDTO).toList();
-
-		log.info("success to recommend all locates");
-		return result;
-	}
+	@Value("${pixabay.api.key}")
+	private String pixabayApiKey;
 
 	public GetRecommendedLocateResponseDTO getRandomRecommendedLocate(@RequestParam(name="quarter1") Boolean quarter1,
 		@RequestParam(name="quarter2") Boolean quarter2, @RequestParam(name="quarter3") Boolean quarter3, @RequestParam(name="quarter4") Boolean quarter4){
@@ -69,17 +65,21 @@ public class RecommendService {
 				quarter1, quarter2, quarter3, quarter4);
 		Collections.shuffle(locates);
 
-		List<GetRecommendedLocateResponseDTO> result = locates.stream()
-			.map(GetRecommendedLocateResponseDTO::toDTO).toList();
+		RecommendedLocate randomLocate = locates.get(0);
 
-		return result.get(0);
+		LocateUtil.setApiKey(pixabayApiKey);
+		String image = LocateUtil.getLocateImage(
+			randomLocate.getLocate().getCountry(),
+			randomLocate.getLocate().getCity());
+
+		return GetRecommendedLocateResponseDTO.toDTO(randomLocate, image);
 	}
 
 	public List<GetRecommendedPlacesResponseDTO> getAllRecommendedPlace(Country country, City city){
 		String searchKeyword = country.toString().concat(" ").concat(city.toString()).concat(" 맛집");
 
 		GeoApiContext context = new GeoApiContext.Builder()
-			.apiKey(apiKey)
+			.apiKey(googleApiKey)
 			.build();
 
 		try{
@@ -106,7 +106,7 @@ public class RecommendService {
 
 	private GetRecommendedPlacesResponseDTO getPlaceDetails(String placeId){
 		GeoApiContext context = new GeoApiContext.Builder()
-			.apiKey(apiKey)
+			.apiKey(googleApiKey)
 			.build();
 		String photoUrl;
 
@@ -118,7 +118,7 @@ public class RecommendService {
 				photoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&photoreference="
 					.concat(details.photos[1].photoReference)
 					.concat("&key=")
-					.concat(apiKey);
+					.concat(googleApiKey);
 			}
 
 			return new GetRecommendedPlacesResponseDTO(

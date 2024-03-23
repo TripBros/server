@@ -31,9 +31,10 @@ public record CreateBoardRequestDTO(@NotBlank(message = "게시글 제목은 필
 									@NotNull(message = "동행 선호 나이대는 필수 선택입니다.") Boolean unrelatedFlag,
 									@NotNull(message = "동행 선호 성별은 필수 선택입니다.") Sex preferSex,
 									LocalDateTime createAt,
-									Long placeId,
+									String placeId,
 									String placeName,
-									String placeUrl) {
+									Double placeLatitude,
+									Double placeLongitude) {
 
 	public Board toEntity(User user, Schedule schedule, PreferAgeRange preferAgeRange){
 
