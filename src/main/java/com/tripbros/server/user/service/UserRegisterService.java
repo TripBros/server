@@ -12,6 +12,7 @@ import com.tripbros.server.user.domain.TravelStyle;
 import com.tripbros.server.user.domain.User;
 import com.tripbros.server.user.dto.EditUserInfoRequest;
 import com.tripbros.server.user.dto.RegisterRequest;
+import com.tripbros.server.user.dto.UserInfoResponse;
 import com.tripbros.server.user.exception.RegisterException;
 import com.tripbros.server.user.exception.UserExceptionMessage;
 import com.tripbros.server.user.repository.TravelStyleRepository;
@@ -92,6 +93,10 @@ public class UserRegisterService {
 		}
 		imageService.deleteImage(user.getProfileImage());
 		userRepository.delete(user);
+	}
+
+	public UserInfoResponse getUserInfoWithoutPassword(User user) {
+		return UserInfoResponse.from(user);
 	}
 
 
