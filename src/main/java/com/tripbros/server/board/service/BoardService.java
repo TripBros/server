@@ -97,6 +97,8 @@ public class BoardService {
 		else
 		 	response = boardRepository.findAllGetDTO(user.getUser().getId());
 
+
+
 		log.info("success to get boards");
 		return response;
 	}

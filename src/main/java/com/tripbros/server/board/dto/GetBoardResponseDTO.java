@@ -2,6 +2,7 @@ package com.tripbros.server.board.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.tripbros.server.board.domain.PreferAgeRange;
 import com.tripbros.server.enumerate.City;
@@ -30,7 +31,7 @@ public class GetBoardResponseDTO {
 	private City city;
 	private Long bookmarkedCount;
 	private Sex preferSex;
-	private PreferAgeRange preferAgeRange;
+	private List<String> preferAgeRange;
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private Integer requiredHeadCount;
@@ -72,6 +73,6 @@ public class GetBoardResponseDTO {
 		this.placeLongitude = placeLongitude;
 		this.chatCount = chatCount;
 		this.createdAt = createdAt;
-		this.preferAgeRange = preferAgeRange;
+		this.preferAgeRange = AgeUtil.preferAgeToString(preferAgeRange);
 	}
 }
