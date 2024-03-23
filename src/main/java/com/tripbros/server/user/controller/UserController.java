@@ -23,6 +23,7 @@ import com.tripbros.server.security.SecurityUser;
 import com.tripbros.server.user.dto.EditUserInfoRequest;
 import com.tripbros.server.user.dto.RegisterRequest;
 import com.tripbros.server.user.dto.SignInRequest;
+import com.tripbros.server.user.dto.UserInfoResponse;
 import com.tripbros.server.user.enumerate.UserResultMessage;
 import com.tripbros.server.user.service.UserRegisterService;
 import com.tripbros.server.user.service.UserService;
@@ -111,5 +112,12 @@ public class UserController {
 	@Operation(summary = "유저 닉네임 반환 API")
 	public ResponseEntity<BaseResponse<String>> getUserNickname(@AuthUser SecurityUser user) {
 		return ResponseEntity.ok(new BaseResponse<>(true, HttpStatus.OK, "성공", user.getUser().getNickname()));
+	}
+
+	@GetMapping
+	@Operation(summary = "유저 정보 반환 API")
+	public ResponseEntity<BaseResponse<UserInfoResponse>> getUserInfo(@AuthUser SecurityUser user) {
+		return ResponseEntity.ok(
+			new BaseResponse<>(true, HttpStatus.OK, "성공", registerService.getUserInfoWithoutPassword(user.getUser())));
 	}
 }
