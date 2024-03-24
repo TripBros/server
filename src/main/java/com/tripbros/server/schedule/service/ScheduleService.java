@@ -74,11 +74,7 @@ public class ScheduleService {
 	}
 
 	public List<GetScheduleResponseDTO> getSchedules(User user){
-		List<Schedule> scheduleList = scheduleRepository.findAllByUser(user);
-		List<GetScheduleResponseDTO> responseList = scheduleList.stream()
-			.map(GetScheduleResponseDTO::toDTO)
-			.toList();
-
+		List<GetScheduleResponseDTO> responseList = scheduleRepository.findMyAllSchedules(user);
 		log.info("success to get schedules");
 		return responseList;
 	}
