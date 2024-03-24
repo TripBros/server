@@ -4,5 +4,6 @@ public record GetRecommendedPlacesResponseDTO(String placeId,
 											  String placeName,
 											  String placeUrl,
 											  Float placeRating,
-											  String placeImage) {
+											  String placeImage,
+											  Boolean isBookmarked) {
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.tripbros.server.user.domain.User;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,6 +35,7 @@ public class BookmarkedPlace {
 	private String placeName;
 	private String placeUrl;
 	private Float placeRating;
+	@Column(length = 500000)
 	private String placeImage;
 
 	private LocalDateTime bookmarkedAt;

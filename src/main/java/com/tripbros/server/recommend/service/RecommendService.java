@@ -80,7 +80,7 @@ public class RecommendService {
 		return GetRecommendedLocateResponseDTO.toDTO(randomLocate, image);
 	}
 
-	public List<GetRecommendedPlacesResponseDTO> getAllRecommendedPlace(Country country, City city){
+	public List<GetRecommendedPlacesResponseDTO> getAllRecommendedPlace(User user, Country country, City city){
 		String searchKeyword = country.toString().concat(" ").concat(city.toString()).concat(" 맛집");
 
 		GeoApiContext context = new GeoApiContext.Builder()
@@ -93,7 +93,7 @@ public class RecommendService {
 			if (response.results != null && response.results.length > 0) {
 				List<CompletableFuture<GetRecommendedPlacesResponseDTO>> results = new ArrayList<>();
 				for(PlacesSearchResult res : response.results)
-					results.add(CompletableFuture.supplyAsync(() -> getPlaceDetails(res.placeId)));
+					results.add(CompletableFuture.supplyAsync(() -> getPlaceDetails(user, res.placeId)));
 
 				CompletableFuture.allOf(results.toArray(new CompletableFuture[0])).join(); // 비동기 작업이 모두 끝날 때까지 대기
 
@@ -109,7 +109,7 @@ public class RecommendService {
 		}
 	}
 
-	private GetRecommendedPlacesResponseDTO getPlaceDetails(String placeId){
+	private GetRecommendedPlacesResponseDTO getPlaceDetails(User user, String placeId){
 		GeoApiContext context = new GeoApiContext.Builder()
 			.apiKey(googleApiKey)
 			.build();
@@ -126,12 +126,16 @@ public class RecommendService {
 					.concat(googleApiKey);
 			}
 
+			Boolean bookmared = Boolean.FALSE;
+			if(user != null && bookmarkedPlaceRepository.existsByUserAndPlaceId(user, details.placeId))
+					bookmared = Boolean.TRUE;
 			return new GetRecommendedPlacesResponseDTO(
 				details.placeId,
 				details.name,
 				details.url.toString(),
 				details.rating,
-				photoUrl
+				photoUrl,
+				bookmared
 			);
 		}catch (Exception e){
 			throw new GoogleApiException();

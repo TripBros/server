@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ import com.tripbros.server.recommend.service.RecommendService;
 import com.tripbros.server.schedule.exception.ScheduleRequestException;
 import com.tripbros.server.security.AuthUser;
 import com.tripbros.server.security.SecurityUser;
+import com.tripbros.server.user.domain.User;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -54,8 +56,14 @@ public class RecommendController {
 
 	@GetMapping("/places")
 	@Operation(summary = "선택한 지역에 대해 모든 추천 맛집을 조회")
-	public ResponseEntity<BaseResponse<List<GetRecommendedPlacesResponseDTO>>> getAllRecommendedPlace(@RequestParam Country country, @RequestParam City city){
-		List<GetRecommendedPlacesResponseDTO> result = recommendService.getAllRecommendedPlace(country, city);
+	public ResponseEntity<BaseResponse<List<GetRecommendedPlacesResponseDTO>>> getAllRecommendedPlace(
+		@AuthenticationPrincipal SecurityUser securityUser, @RequestParam Country country, @RequestParam City city){
+		User user;
+		if(securityUser == null)
+			user = null;
+		else
+			user = securityUser.getUser();
+		List<GetRecommendedPlacesResponseDTO> result = recommendService.getAllRecommendedPlace(user, country, city);
 
 		BaseResponse<List<GetRecommendedPlacesResponseDTO>> response = new BaseResponse<>(true ,HttpStatus.OK,
 			RecommendResultMessage.GET_ALL_RECOMMEND_PLACES_SUCCESS.getMessage(), result);
