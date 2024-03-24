@@ -4,8 +4,6 @@ import java.time.LocalDate;
 
 import com.tripbros.server.enumerate.City;
 import com.tripbros.server.enumerate.Country;
-import com.tripbros.server.schedule.domain.Schedule;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,24 +13,9 @@ public record GetScheduleResponseDTO(Long id,
 									 @NotNull(message = "일정 지역은 필수 입력 값입니다.") City city,
 									 String placeId,
 									 String placeName,
-									 Double placeLatitude,
-									 Double placeLongitude,
+									 String boardTitle,
+									 Boolean hostFlag,
 									 @NotNull(message = "시작 날짜는 필수 입력 값입니다.") LocalDate startDate,
 									 @NotNull(message = "끝 날짜는 필수 입력 값입니다.") LocalDate endDate,
 									 String memo){
-	public static GetScheduleResponseDTO toDTO(Schedule schedule){ //FIXME : N+1 발생 검사
-		return new GetScheduleResponseDTO(
-			schedule.getId(),
-			schedule.getTitle(),
-			schedule.getLocate().getCountry(),
-			schedule.getLocate().getCity(),
-			schedule.getPlaceId(),
-			schedule.getPlaceName(),
-			schedule.getPlaceLatitude(),
-			schedule.getPlaceLongitude(),
-			schedule.getStartDate(),
-			schedule.getEndDate(),
-			schedule.getMemo()
-		);
-	}
 }
